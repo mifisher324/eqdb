@@ -2093,125 +2093,125 @@ def get_class_string(num):
     while num > 0:
         if num >= 32768:
             num -= 32768
-            out_str += 'BER '
+            out_str = ' BER' + out_str
         if num >= 16384:
             num -= 16384
-            out_str += 'BST '
+            out_str = ' BST' + out_str
         if num >= 8192:
             num -= 8192
-            out_str += 'ENC '
+            out_str = ' ENC' + out_str
         if num >= 4096:
             num -= 4096
-            out_str += 'MAG '
+            out_str = ' MAG' + out_str
         if num >= 2048:
             num -= 2048
-            out_str += 'WIZ '
+            out_str = ' WIZ' + out_str
         if num >= 1024:
             num -= 1024
-            out_str += 'NEC '
+            out_str = ' NEC' + out_str
         if num >= 512:
             num -= 512
-            out_str += 'SHM '
+            out_str = ' SHM' + out_str
         if num >= 256:
             num -= 256
-            out_str += 'ROG '
+            out_str = ' ROG' + out_str
         if num >= 128:
             num -= 128
-            out_str += 'BRD '
+            out_str = ' BRD' + out_str
         if num >= 64:
             num -= 64
-            out_str += 'MNK '
+            out_str = ' MNK' + out_str
         if num >= 32:
             num -= 32
-            out_str += 'DRU '
+            out_str = ' DRU' + out_str
         if num >= 16:
             num -= 16
-            out_str += 'SHD '
+            out_str = ' SHD' + out_str
         if num >= 8:
             num -= 8
-            out_str += 'RNG '
+            out_str = ' RNG' + out_str
         if num >= 4:
             num -= 4
-            out_str += 'PAL '
+            out_str = ' PAL' + out_str
         if num >= 2:
             num -= 2
-            out_str += 'CLR '
+            out_str = ' CLR' + out_str
         if num >= 1:
             num -= 1
-            out_str += 'WAR '
-    return out_str.strip()
+            out_str = ' WAR' + out_str
+    return out_str[1:]
 
 
 def get_slot_string(num):
-    """Returns the classes that can use this item."""
+    """Returns the slots that this item goes in"""
     out_str = ''
     if num == 0:
         return 'NONE'
     while num > 0:
         if num >= 4194304:
             num -= 4194304
-            out_str += 'Ammo '
+            out_str = ' Ammo' + out_str
         if num >= 1048576:
             num -= 1048576
-            out_str += 'Waist '
+            out_str = ' Waist' + out_str
         if num >= 524288:
             num -= 524288
-            out_str += 'Feet '
+            out_str = ' Feet' + out_str
         if num >= 262144:
             num -= 262144
-            out_str += 'Legs '
+            out_str = ' Legs' + out_str
         if num >= 131072:
             num -= 131072
-            out_str += 'Chest '
+            out_str = ' Chest' + out_str
         if num >= 65536:
             num -= 65536
         if num >= 32768:
             num -= 32768
-            out_str += 'Finger '
+            out_str = ' Finger' + out_str
         if num >= 16384:
             num -= 16384
-            out_str += 'Secondary '
+            out_str = ' Secondary' + out_str
         if num >= 8192:
             num -= 8192
-            out_str += 'Primary '
+            out_str = ' Primary' + out_str
         if num >= 4096:
             num -= 4096
-            out_str += 'Hands '
+            out_str = ' Hands' + out_str
         if num >= 2048:
             num -= 2048
-            out_str += 'Range '
+            out_str = ' Range' + out_str
         if num >= 1024:
             num -= 1024
         if num >= 512:
             num -= 512
-            out_str += 'Wrist '
+            out_str = ' Wrist' + out_str
         if num >= 256:
             num -= 256
-            out_str += 'Back '
+            out_str = ' Back' + out_str
         if num >= 128:
             num -= 128
-            out_str += 'Arms '
+            out_str = ' Arms' + out_str
         if num >= 64:
             num -= 64
-            out_str += 'Shoulders '
+            out_str = ' Shoulders' + out_str
         if num >= 32:
             num -= 32
-            out_str += 'Neck '
+            out_str = ' Neck' + out_str
         if num >= 16:
             num -= 16
         if num >= 8:
             num -= 8
-            out_str += 'Face '
+            out_str = ' Face' + out_str
         if num >= 4:
             num -= 4
-            out_str += 'Head '
+            out_str = ' Head' + out_str
         if num >= 2:
             num -= 2
-            out_str += 'Ear '
+            out_str = ' Ear' + out_str
         if num >= 1:
             num -= 1
-            out_str += 'Charm '
-    return out_str.strip()
+            out_str = ' Charm' + out_str
+    return out_str[1:]
 
 
 def get_type_string(num):
