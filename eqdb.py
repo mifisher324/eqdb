@@ -7,7 +7,6 @@ from flask import Flask, render_template, request, flash, redirect, url_for
 
 import spell
 import utils
-import local
 import logic
 from routes import apis, pets, spells, zones, tradeskills, npcs, items, factions
 

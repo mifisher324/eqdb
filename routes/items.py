@@ -21,7 +21,7 @@ def click_item_search():
         if 'g_class_3' in request.form:
             if request.form['g_class_3'] != 'None':
                 filters.update({'g_class_3': request.form['g_class_3']})
-        base_era_list = ['Classic', 'Kunark', 'Velious', 'Luclin', 'Planes']
+        base_era_list = ['Classic', 'Kunark', 'Velious', 'Luclin', 'Planes', 'LDoN']
         remove_era_list = request.form.getlist('eras')
         era_list = []
         for era in base_era_list:

@@ -14,7 +14,7 @@ site_config['DEFAULT'] = {'site_fqdn': 'localhost',
                           'debug': True,
                           'site_version': '0.0.0.0'}
 
-site_config['thj'] = {'expansion': 5}
+site_config['emu'] = {'expansion': 6}
 
 site_config['database'] = {'driver': '',
                            'user': '',
@@ -23,13 +23,8 @@ site_config['database'] = {'driver': '',
                            'host': '',
                            'port': ''}
 
-site_config['local_database'] = {'connection': 'sqlite:///local_db.db'}
-
 site_config['path'] = {'app_log': 'c:\\site\\eqdb\\eqdb.log',
                        'flask_log': 'c:\\site\\eqdb\\flask.log'}
-
-site_config['discord'] = {'client_id': '',
-                          'client_secret': ''}
 
 with open(os.path.join(here, 'configuration.ini')) as fh:
     site_config.write(fh)

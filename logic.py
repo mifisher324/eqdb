@@ -236,7 +236,7 @@ def get_item_data(item_id, full=False):
         ret_dict['green'] = (int(ret_dict['color']) & 0x0000FF00) >> 8
         ret_dict['blue'] = (int(ret_dict['color']) & 0x000000FF)
 
-        ret_dict['thj_enabled'] = False
+        ret_dict['emu_enabled'] = False
         item_id = int(item_id)
         if item_id < 1000000:
             # See if Enchanted and Legendary exist
@@ -246,9 +246,9 @@ def get_item_data(item_id, full=False):
                 query = session.query(Item.id).filter(or_(Item.id == ench, Item.id == lego))
                 result = query.all()
                 if len(result) == 2:
-                    ret_dict['thj_enabled'] = True
+                    ret_dict['emu_enabled'] = True
         elif item_id > 1000000:
-            ret_dict['thj_enabled'] = True
+            ret_dict['emu_enabled'] = True
         # Get mobs that drop this as loot
         droppers = []
         orig_item_id = item_id
