@@ -6,6 +6,8 @@ import utils
 from logic import Zone, engine, Spawn2, SpawnEntry, SpawnGroup, NPCTypes, Item, expansion, \
     ZonePoints, LootTableEntries, LootDropEntries
 
+from logic import expansion
+
 
 def _get_link_filters():
     """Helper to return the basic link filters between zone, npc, and item"""
@@ -16,14 +18,15 @@ def _get_link_filters():
 
 def get_zone_listing():
     era_list = {'Classic': 0, 'Ruins of Kunark': 1, 'Legacy of Ykesha': 5, 'Scars of Velious': 2, 'Shadows of Luclin': 3,
-                #'Planes of Power': 4, 'Lost Dungeons of Norrath': 6, 'Gates of Discord': 7}
-                'Planes of Power': 4}
+                'Planes of Power': 4, 'Lost Dungeons of Norrath': 6, 'Gates of Discord': 7}
     out_list = {}
     exclusion_list = ['cshome', 'hateplane', 'powar', 'soldungc', 'qvicb']
     # Massaging
     massage_list = {'nedaria': 7, 'bazaar': 3}
     add_to_later = {0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {}}
     for era in era_list:
+        if era_list[era] > expansion:
+            continue
         with Session(bind=engine) as session:
             query = session.query(Zone.zoneidnumber, Zone.short_name, Zone.long_name, Zone.zone_exp_multiplier). \
                 filter(Zone.expansion == era_list[era])

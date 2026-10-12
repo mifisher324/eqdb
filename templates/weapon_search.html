@@ -480,24 +480,26 @@ document.addEventListener("DOMContentLoaded", function () {
             <td>
                 <table id="rightOps" class="smallerfont">
                     <tr>
-                        <td colspan="4">
-                            Exclude Expansions (Kunark includes Legacy of Ykesha):
+                       <td colspan="4">
+                            <abbr title="Highlight to exclude items from this expansion.  Kunark includes Legacy of Ykesha">
+                                Exclude Expansions:</abbr>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="4">
-                            <select multiple name="eras" size="5">
+                            <select multiple name="eras" size="6">
                                 <option value="Classic">Classic</option>
                                 <option value="Kunark">Kunark</option>
                                 <option value="Velious">Velious</option>
                                 <option value="Luclin">Luclin</option>
                                 <option value="Planes">Planes of Power</option>
+                                <option value="LDoN">Lost Dungeons of Norrath</option>
                             </select>
                     </tr>
                     <tr>
                         <td>Weapons with Proc:</td>
-                        <td><input type="radio" checked="checked" name="proc" value="None"> Include</td>
-                        <td><input type="radio" name="proc" value="True"> Only</td>
+                        <td><input type="radio" checked="checked" name="proc" value="None"> Include
+                        <input type="radio" name="proc" value="True"> Only</td>
                     </tr>
                     <tr>
                         <td>Proc Type:</td>

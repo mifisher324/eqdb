@@ -223,7 +223,7 @@ def item_search():
         filters.update({'i_type': i_type})
 
     # Handle Eras
-    base_era_list = ['Classic', 'Kunark', 'Velious', 'Luclin', 'Planes']
+    base_era_list = ['Classic', 'Kunark', 'Velious', 'Luclin', 'Planes', 'LDoN']
     remove_era_list = request.form.getlist('eras')
     era_list = []
     for era in base_era_list:
