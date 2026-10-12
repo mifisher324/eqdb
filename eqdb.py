@@ -4,7 +4,6 @@ import logging
 import os
 
 from flask import Flask, render_template, request, flash, redirect, url_for
-from flask_discord import DiscordOAuth2Session, requires_authorization, Unauthorized
 
 import spell
 import utils
@@ -35,9 +34,6 @@ if SITE_TYPE == 'Development':
 else:
     app.config['DISCORD_REDIRECT_URI'] = "https://eqdb.net/callback"
 app.config['DISCORD_BOT_TOKEN'] = ""
-
-
-discord = DiscordOAuth2Session(app)
 
 app_path = site_config.get('path', 'app_log')
 formatter = logging.Formatter(
@@ -75,313 +71,6 @@ def all_exception_handler(error):
     return render_template('site_error.html')
 
 
-@app.route("/login/")
-def login():
-    return discord.create_session(scope=['identify'])
-
-
-@app.route("/user/restrict/delete/<int:rid>")
-@requires_authorization
-def delete_restrict_set(rid):
-    user = discord.fetch_user()
-    success = local.delete_restrict_set(user, rid)
-    if not success:
-        flash('You are not allowed to view, modify, or delete this set.')
-        return redirect(url_for('error'))
-    flash('Item Restriction Set deleted')
-    return redirect(url_for('user_home'))
-
-
-@app.route("/user/restrict/<int:rid>")
-@requires_authorization
-def get_restrict_set(rid):
-    user = discord.fetch_user()
-    data = local.get_restrict_set(rid, user)
-    if not data:
-        flash('You are not allowed to view or modify this set.')
-        return redirect(url_for('error'))
-    return render_template('restrict_detail.html', data=data, rid=rid)
-
-
-@app.route("/user/restrict/update/<int:rid>", methods=['POST'])
-@requires_authorization
-def update_restrict_set(rid):
-    user = discord.fetch_user()
-
-    filters = {}
-    for i in range(1, 100):
-        thing = 'stat_%s' % i
-        thing_val = 'stat_val_%s' % i
-        if thing in request.form:
-            if request.form[thing] in filters:
-                flash('Cannot add the same item stat filter twice.')
-                return redirect(url_for('get_restrict_set', rid=rid))
-            if 'none' in request.form[thing]:
-                continue
-
-            filters.update({
-                request.form[thing]: float(request.form[thing_val])})
-        else:
-            continue
-    result = local.update_restrict_set(rid, filters, user=user)
-    if not result:
-        flash('You are not allowed to view or modify this set.')
-        return redirect(url_for('error'))
-    flash('Item Restriction Filters Set updated!')
-    return redirect(url_for('get_restrict_set', rid=rid))
-
-
-@app.route("/user/restrict/create", methods=['GET', 'POST'])
-@requires_authorization
-def create_restrict_set():
-    user = discord.fetch_user()
-    if request.method == 'GET':
-        return render_template("create_restrict.html")
-    else:
-        filters = {}
-        for i in range(1, 100):
-            thing = 'stat_%s' % i
-            thing_val = 'stat_val_%s' % i
-            if thing in request.form:
-                if request.form[thing] in filters:
-                    flash('Cannot add the same item stat filter twice.')
-                    return redirect(url_for('create_restrict_set'))
-                if 'none' in request.form[thing]:
-                    continue
-
-                filters.update({
-                    request.form[thing]: float(request.form[thing_val])})
-            else:
-                continue
-        name = request.form['set_name']
-        if len(name) == 0:
-            flash('Must enter a set name')
-            return redirect(url_for('create_restrict_set'))
-
-        flash('Item Stat Restriction Set created successfully!')
-        rid = local.add_restrict_set(user, name, filters)
-        return redirect(url_for('get_restrict_set', rid=rid))
-
-
-@app.route("/user/weights/delete/<int:wid>")
-@requires_authorization
-def delete_weights_set(wid):
-    user = discord.fetch_user()
-    success = local.delete_weights_set(user, wid)
-    if not success:
-        flash('You are not allowed to view, modify, or delete this set.')
-        return redirect(url_for('error'))
-    flash('Item Weights Set deleted')
-    return redirect(url_for('user_home'))
-
-
-@app.route("/user/weights/update/<int:wid>", methods=['POST'])
-@requires_authorization
-def update_weights_set(wid):
-    user = discord.fetch_user()
-
-    filters = {}
-    for i in range(1, 100):
-        thing = 'weight_%s' % i
-        thing_val = 'stat_weight_%s' % i
-        if thing in request.form:
-            if request.form[thing] in filters:
-                flash('Cannot add the same item stat weight twice.')
-                return redirect(url_for('get_restrict_set', wid=wid))
-            if 'none' in request.form[thing]:
-                continue
-
-            filters.update({
-                request.form[thing]: float(request.form[thing_val])})
-        else:
-            continue
-    result = local.update_weights_set(wid, filters, user=user)
-    if not result:
-        flash('You are not allowed to view or modify this set.')
-        return redirect(url_for('error'))
-    flash('Item Weights Set updated!')
-    return redirect(url_for('get_weights_set', wid=wid))
-
-
-@app.route("/user/weights/<int:wid>")
-@requires_authorization
-def get_weights_set(wid):
-    user = discord.fetch_user()
-    data = local.get_weight_set(wid, user)
-    if not data:
-        flash('You are not allowed to view or modify this set.')
-        return redirect(url_for('error'))
-    return render_template('weights_detail.html', data=data, wid=wid)
-
-
-@app.route("/user/weights/create", methods=['GET', 'POST'])
-@requires_authorization
-def create_weights_set():
-    user = discord.fetch_user()
-    if request.method == 'GET':
-        return render_template("create_weights.html")
-    else:
-        filters = {}
-        for i in range(1, 100):
-            thing = 'weight_%s' % i
-            thing_val = 'stat_weight_%s' % i
-            if thing in request.form:
-                if request.form[thing] in filters:
-                    flash('Cannot add the same item stat filter twice.')
-                    return redirect(url_for('create_weight_set'))
-                if 'none' in request.form[thing]:
-                    continue
-
-                filters.update({
-                    request.form[thing]: float(request.form[thing_val])})
-            else:
-                continue
-        name = request.form['set_name']
-        if len(name) == 0:
-            flash('Must enter a set name')
-            return redirect(url_for('create_weight_set'))
-
-        flash('Item Stat Weight Set created successfully!')
-        wid = local.add_weights_set(user, name, filters)
-        return redirect(url_for('get_weights_set', wid=wid))
-
-
-@app.route("/user/gear/delete/<int:glid>", methods=['POST'])
-@requires_authorization
-def delete_gear_list(glid):
-    """NOTE: THIS FEATURE IS CURRENTLY DARK AS IT IS BEING EVALUATED WHETHER EQDB SHOULD PROVIDE THIS OR NOT"""
-    return 'Not Implemented'
-    user = discord.fetch_user()
-    return 'NYI'
-
-
-@app.route("/user/gear/update/<int:item_id>", methods=['POST'])
-@requires_authorization
-def update_gear_list(item_id):
-    """NOTE: THIS FEATURE IS CURRENTLY DARK AS IT IS BEING EVALUATED WHETHER EQDB SHOULD PROVIDE THIS OR NOT"""
-    return 'Not Implemented'
-    user = discord.fetch_user()
-    glid = None
-    slot = None
-    aug_slot = None
-    if 'glid' not in request.form:
-        flash('Must select gear list to update')
-    else:
-        glid = request.form['glid']
-    if 'slot' in request.form:
-        slot = request.form['slot']
-        if slot == 'None':
-            flash('Must select a slot for this item.')
-            return redirect(url_for('error'))
-    if 'augslot' in request.form:
-        aug_slot = request.form['augslot']
-    result = local.update_gear_list(user, glid, item_id, slot, aug_slot)
-    if result is None:
-        flash('You are not authorized to view, update, or delete this gear list.')
-        return redirect(url_for('error'))
-    elif not result:
-        flash('You must select an augment slot for this item.')
-        return redirect(url_for('error'))
-    else:
-        flash('Item added!')
-        return redirect(url_for('item_detail', item_id=item_id))
-
-
-@app.route("/user/gear/<int:glid>")
-@requires_authorization
-def get_gear_list(glid):
-    """NOTE: THIS FEATURE IS CURRENTLY DARK AS IT IS BEING EVALUATED WHETHER EQDB SHOULD PROVIDE THIS OR NOT"""
-    return 'Not Implemented'
-    user = discord.fetch_user()
-    data = local.get_gear_list(user, glid)
-    return render_template('gear_list_detail.html', data=data)
-
-
-@app.route("/user/gear/create", methods=['GET', 'POST'])
-@requires_authorization
-def create_gear_list():
-    """NOTE: THIS FEATURE IS CURRENTLY DARK AS IT IS BEING EVALUATED WHETHER EQDB SHOULD PROVIDE THIS OR NOT"""
-    return 'Not Implemented'
-    user = discord.fetch_user()
-    if request.method == 'GET':
-        return render_template('create_gear_list.html')
-    else:
-        name = request.form['set_name']
-        if len(name) == 0:
-            flash('Must enter a set name')
-            return redirect(url_for('create_weight_set'))
-        if 'public' in request.form:
-            is_public = True
-        else:
-            is_public = False
-        glid = local.create_gear_list(user, name, is_public)
-        flash('Gear list created')
-        return render_template(url_for('get_gear_list', glid=glid))
-
-
-@app.route("/user/")
-@requires_authorization
-def user_home():
-    user = discord.fetch_user()
-    data = local.get_user_data(user)
-    return render_template('user_home.html', data=data)
-
-
-@app.route("/callback/")
-def callback():
-    discord.callback()
-    return redirect(url_for("user_home"))
-
-
-@app.route("/identify/")
-def identify():
-    if SITE_TYPE == 'Beta':
-        flash('Item Identification is not supported on Beta site')
-        return redirect(url_for('error'))
-    return render_template('identify_landing.html')
-
-
-@app.errorhandler(Unauthorized)
-def redirect_unauthorized(e):
-    return redirect(url_for("login"))
-
-
-@app.route("/identify/attributed/", methods=['GET', 'POST'])
-@requires_authorization
-def identify_attributed():
-    if SITE_TYPE == 'Beta':
-        flash('Item Identification is not supported on Beta site')
-        return redirect(url_for('error'))
-    user = discord.fetch_user()
-    if request.method == 'GET':
-        item = local.get_unidentified_item(user=user)
-        return render_template('identify.html', item=item)
-    else:
-        data = request.form
-        # Do some validation
-        if data['expansion'] == 'None' and data['source'] == 'None':
-            flash('You must at least specify the expansion and source for an item identification.')
-            return redirect(url_for('identify_attributed'))
-        data = local.add_item_identification(data, user=user)
-        item = logic.get_item_data(data.get('item_id'))
-        return render_template('identify_result.html', item=item, data=data)
-
-
-@app.route("/identify/unattributed/", methods=['GET', 'POST'])
-def identify_unattributed():
-    if SITE_TYPE == 'Beta':
-        flash('Item Identification is not supported on Beta site')
-        return redirect(url_for('error'))
-    if request.method == 'GET':
-        item = local.get_unidentified_item()
-        return render_template('identify.html', item=item)
-    else:
-        data = request.form
-        data = local.add_item_identification(data)
-        item = logic.get_item_data(data.get('item_id'))
-        return render_template('identify_result.html', item=item, data=data)
-
-
 @app.route("/search/all", methods=['POST'])
 def all_search():
     name = request.form['all_names']
@@ -396,15 +85,6 @@ def all_search():
         return redirect(url_for('main_page'))
     data = logic.all_search(name=name)
     return render_template('all_search_result.html', search_txt=name, data=data)
-
-
-@app.route("/identify/leaderboard/", methods=['GET'])
-def identify_leaderboard():
-    if SITE_TYPE == 'Beta':
-        flash('Item Identification is not supported on Beta site')
-        return redirect(url_for('error'))
-    data = local.get_leaderboard()
-    return render_template('identify_leaderboard.html', data=data)
 
 
 @app.route("/tooltip/<item_id>", methods=['GET', 'POST'])
@@ -461,6 +141,7 @@ def item_search():
     full_detail = False
     show_click = False
     show_proc = False
+    show_proc_max_dmg = False
     data = request.form
 
     # Make sure _something_ was provided
@@ -565,6 +246,8 @@ def item_search():
     if 'proc_type' in data and data['proc_type'] != 'None':
         filters.update({'proc_type': data['proc_type']})
         show_proc = True
+        if data['proc_type'] == 'All':
+            show_proc_max_dmg = True
 
     # Handle Click Effect Items
     if 'click' in data:
@@ -719,53 +402,25 @@ def item_search():
     return render_template('item_search_results.html', data=ret_items, reduce=reduce_restrictions,
                            show_dmg_delay=show_dmg_delay, show_focus=focus, full_detail=full_detail,
                            show_values=show_values, show_click=show_click, show_proc=show_proc, show_worn=worn,
-                           show_inst=inst, show_spells=show_spells)
+                           show_inst=inst, show_spells=show_spells, show_proc_max_dmg=show_proc_max_dmg)
 
 
 @app.route("/search/weapon", methods=['GET', 'POST'])
 def weapon_search():
-    if discord.is_user_logged_in():
-        user = discord.fetch_user()
-    else:
-        user = None
     if request.method == 'GET':
         skills = utils.get_all_skills()
-        if user:
-            restricts = local.get_restrict_sets(user)
-            weights = local.get_weights_sets(user)
-        else:
-            restricts = []
-            weights = []
         return render_template('weapon_search.html',
-                               skills=skills,
-                               restricts=restricts,
-                               restrict_json=json.dumps(restricts),
-                               weights=weights,
-                               weights_json=json.dumps(weights))
+                               skills=skills)
     else:
         return redirect(url_for('item_search'), code=307)
 
 
 @app.route("/search/armor", methods=['GET', 'POST'])
 def armor_search():
-    if discord.is_user_logged_in():
-        user = discord.fetch_user()
-    else:
-        user = None
     if request.method == 'GET':
         skills = utils.get_all_skills()
-        if user:
-            restricts = local.get_restrict_sets(user)
-            weights = local.get_weights_sets(user)
-        else:
-            restricts = []
-            weights = []
         return render_template('item_search.html',
-                               skills=skills,
-                               restricts=restricts,
-                               restrict_json=json.dumps(restricts),
-                               weights=weights,
-                               weights_json=json.dumps(weights))
+                               skills=skills)
     else:
         return redirect(url_for('item_search'), code=307)
 

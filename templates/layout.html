@@ -1,5 +1,5 @@
 <html data-bs-theme="dark">
-<title>{% block title %}EQDB - The Heroes Journey Database Search{% endblock %}</title>
+<title>{% block title %}EMU Database Search{% endblock %}</title>
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 <script src="https://unpkg.com/@popperjs/core@2"></script>
 <script src="https://unpkg.com/tippy.js@6"></script>
@@ -89,11 +89,12 @@ $(document).ready(function() {
 <div class=page>
     {% block header %}
     <nav class="navbar navbar-expand-lg navbar-light bg-dark">
-        <a class="nav-link" href="{{ url_for('main_page') }}"><img style="width: 65px; height: 65px;"
-                                                                   src="/static/icons/eqdb_alt_4.png"></a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item dropdown">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main_page') }}">Main Page</a>
+                </li>
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                        aria-expanded="false">
                         Items
@@ -152,12 +153,6 @@ $(document).ready(function() {
             </ul>
             <ul class="navbar-nav my-2 my-lg-0 mr-sm-2">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('user_home') }}">User Area</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('identify') }}">Identify Items</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('about') }}">About</a>
                 </li>
                 <li class="nav-item">
@@ -196,9 +191,6 @@ $(document).ready(function() {
         Site Version: {{config.SITE_VERSION}}<br>
         Site created by Convection. &nbsp;&nbsp;&nbsp;&nbsp;EQDB is not affiliated with Daybreak Games, Darkpaw Studios,
         or any other EverQuest Fan Site.&nbsp;&nbsp;&nbsp;&nbsp;<br>
-        Special thanks to Talodar from www.thjdi.cc for his assistance with tooltips.&nbsp;&nbsp;&nbsp;&nbsp;
-        Special thanks to Aporia and Catapultam for providing data and the <a href="https://heroesjourneyemu.com/">TheHeroesJourney</a>
-        EMU server.&nbsp;&nbsp;&nbsp;&nbsp;<br>
         Credit to <a href="https://www.eqmaps.info/">Brewall Maps</a> for all maps shown
 </font>
 </center>

@@ -1,3 +1,20 @@
+==3.0==
+* Removed the "Login" section (it does nothing now).
+* Removed the "User Area", unneeded with changes to use local cache.
+* Removed "Identify Items" minigame, it is not needed and was barely used.
+
+* Modified Weapon and Armor search:
+    ** Adding / removing a restriction filter no longer moves the previous options to the right
+    ** Stat Restrictions and Stat Weights now use your browser's cache and will survive going off of the associated
+    search page (and will also automatically restore themselves when you come back later).
+    ** Search results no longer open in a new tab
+    ** Fixed searching for combat effects mod 2
+
+* Weapon Search
+    ** The Item Type now updates to only the allowed options for the slot selected
+    ** A new option for procs has been added, All Direct Damage, which will also include a column that shows the
+    base damage of the proc.
+
 ==2.2==
 DEPLOYED: 7/22/2025
 * New feature: Click Item Search

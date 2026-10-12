@@ -14,282 +14,235 @@ function doStuff() {
 }
 </script>
 <script>
-var weightId = 1;
-function updateWeightsTable(stat, value, name) {
-		$("#stat_weights").append(
-"<tr> \
-  <td> \
-    <select name=\"weight_" + weightId + "\"> \
-	      <option value=\"" + stat + "\" selected=\"selected\">" + name + "</option> \
-		  <option value=\"none\"><b>==Basic Attributes==</b></option> \
-		  <option value=\"hp\">Hit Points</option> \
-		  <option value=\"mana\">Mana</option> \
-		  <option value=\"endur\">Endurance</option> \
-		  <option value=\"ac\">Armor Class</option> \
-		  <option value=\"none\"><b>==Base Stats==</b></option> \
-		  <option value=\"aagi\">Agility</option> \
-		  <option value=\"acha\">Charisma</option> \
-		  <option value=\"adex\">Dexterity</option> \
-		  <option value=\"aint\">Intelligence</option> \
-		  <option value=\"asta\">Stamina</option> \
-		  <option value=\"astr\">Strength</option> \
-		  <option value=\"awis\">Wisdom</option> \
-		  <option value=\"none\"><b>==Heroic Stats==</b></option> \
-		  <option value=\"heroic_agi\">Heroic Agility</option> \
-		  <option value=\"heroic_cha\">Heroic Charisma</option> \
-		  <option value=\"heroic_dex\">Heroic Dexterity</option> \
-		  <option value=\"heroic_int\">Heroic Intelligence</option> \
-		  <option value=\"heroic_sta\">Heroic Stamina</option> \
-		  <option value=\"heroic_str\">Heroic Strength</option> \
-		  <option value=\"heroic_wis\">Heroic Wisdom</option> \
-		  <option value=\"none\"><b>==Resists (Heroic Included)==</b></option> \
-		  <option value=\"cr\">Resist Cold</option> \
-		  <option value=\"dr\">Resist Disease</option> \
-		  <option value=\"fr\">Resist Fire</option> \
-		  <option value=\"mr\">Resist Magic</option> \
-		  <option value=\"pr\">Resist Poison</option> \
-		  <option value=\"none\"><b>==Mod 1s==</b></option> \
-		  <option value=\"attack\">Attack</option> \
-		  <option value=\"haste\">Haste</option> \
-		  <option value=\"regen\">HP Regeneration</option> \
-		  <option value=\"manaregen\">Mana Regeneration</option> \
-		  <option value=\"enduranceregen\">Endurance Regeneration</option> \
-		  <option value=\"healamt\">Healing Amount</option> \
-		  <option value=\"spelldmg\">Spell Damage</option> \
-		  <option value=\"none\"><b>==Mod 2s==</b></option> \
-		  <option value=\"accuracy\">Accuracy</option> \
-		  <option value=\"avoidance\">Avoidance</option> \
-		  <option value=\"combateffects\">Combat Effects</option> \
-		  <option value=\"damageshield\">Damage Shielding</option> \
-		  <option value=\"dotshielding\">DoT Shield</option> \
-		  <option value=\"shielding\">Shielding</option> \
-		  <option value=\"spellshield\">Spell Shield</option> \
-		  <option value=\"strikethrough\">Strikethrough</option> \
-		  <option value=\"stunresist\">Stun Resist</option> \
-	</select> \
-  </td> \
-  <td> \
-    <input name=\"stat_weight_" + weightId + "\" size=\"3\" value=\"" + value + "\"></td> \
-  </td> \
-  <td> \
-    <input type=\"button\" class=\"removerow\" value=\"-\"> \
-  </td> \
-</tr>");
-		weightId++;
-		$(".removerow").on('click', function() {
-			$(this).parent().parent().remove();
-		});
-};
-</script>
-<script>
-var filterId = 1;
-function updateRestrictTable(stat, value, name) {
-    $("#stat_filters").append(
-        	"<tr> \
-	  <td> \
-	    <select name=\"stat_" + filterId + "\"> \
-	      <option value=\"" + stat + "\" selected=\"selected\">" + name + "</option> \
-		  <option value=\"none\"><b>==Basic Attributes==</b></option> \
-		  <option value=\"hp\">Hit Points</option> \
-		  <option value=\"mana\">Mana</option> \
-		  <option value=\"endur\">Endurance</option> \
-		  <option value=\"ac\">Armor Class</option> \
-		  <option value=\"none\"><b>==Base Stats==</b></option> \
-		  <option value=\"aagi\">Agility</option> \
-		  <option value=\"acha\">Charisma</option> \
-		  <option value=\"adex\">Dexterity</option> \
-		  <option value=\"aint\">Intelligence</option> \
-		  <option value=\"asta\">Stamina</option> \
-		  <option value=\"astr\">Strength</option> \
-		  <option value=\"awis\">Wisdom</option> \
-		  <option value=\"none\"><b>==Heroic Stats==</b></option> \
-		  <option value=\"heroic_agi\">Heroic Agility</option> \
-		  <option value=\"heroic_cha\">Heroic Charisma</option> \
-		  <option value=\"heroic_dex\">Heroic Dexterity</option> \
-		  <option value=\"heroic_int\">Heroic Intelligence</option> \
-		  <option value=\"heroic_sta\">Heroic Stamina</option> \
-		  <option value=\"heroic_str\">Heroic Strength</option> \
-		  <option value=\"heroic_wis\">Heroic Wisdom</option> \
-		  <option value=\"none\"><b>==Resists (Heroic Included)==</b></option> \
-		  <option value=\"cr\">Resist Cold</option> \
-		  <option value=\"dr\">Resist Disease</option> \
-		  <option value=\"fr\">Resist Fire</option> \
-		  <option value=\"mr\">Resist Magic</option> \
-		  <option value=\"pr\">Resist Poison</option> \
-		  <option value=\"none\"><b>==Mod 1s==</b></option> \
-		  <option value=\"attack\">Attack</option> \
-		  <option value=\"haste\">Haste</option> \
-		  <option value=\"regen\">HP Regeneration</option> \
-		  <option value=\"manaregen\">Mana Regeneration</option> \
-		  <option value=\"enduranceregen\">Endurance Regeneration</option> \
-		  <option value=\"healamt\">Healing Amount</option> \
-		  <option value=\"spelldmg\">Spell Damage</option> \
-		  <option value=\"none\"><b>==Mod 2s==</b></option> \
-		  <option value=\"accuracy\">Accuracy</option> \
-		  <option value=\"avoidance\">Avoidance</option> \
-		  <option value=\"combateffects\">Combat Effects</option> \
-		  <option value=\"damageshield\">Damage Shielding</option> \
-		  <option value=\"dotshielding\">DoT Shield</option> \
-		  <option value=\"shielding\">Shielding</option> \
-		  <option value=\"spellshield\">Spell Shield</option> \
-		  <option value=\"strikethrough\">Strikethrough</option> \
-		  <option value=\"stunresist\">Stun Resist</option> \
-		</select> \
-	  </td> \
-	  <td><input name=\"stat_val_" + filterId + "\" size=\"3\" value=\"" + value + "\"></td> \
-	  <td> \
-	    <input type=\"button\" class=\"removerow\" value=\"-\"> \
-	  </td> \
-	</tr>");
+/* ============================================================
+   1. JSON definition of all stat categories + options
+   ============================================================ */
+const STAT_OPTIONS = [
+    {
+        label: "Basic Attributes",
+        items: [
+            { value: "hp", text: "Hit Points" },
+            { value: "mana", text: "Mana" },
+            { value: "endur", text: "Endurance" },
+            { value: "ac", text: "Armor Class" }
+        ]
+    },
+    {
+        label: "Weapon Attributes",
+        items: [
+            { value: "damage", text: "Damage" },
+            { value: "delay", text: "Delay (inverted)" },
+            { value: "procrate", text: "Proc Rate" },
+            { value: "backstabdmg", text: "Backstab Damage" },
+            { value: "w_eff", text: "Weapon Ratio (dmg/delay)" },
+            { value: "elemdmgamt", text: "Elemental Damage" },
+            { value: "bane_damage", text: "Bane Damage" },
+        ]
+    },
+    {
+        label: "Base Stats",
+        items: [
+            { value: "aagi", text: "Agility" },
+            { value: "acha", text: "Charisma" },
+            { value: "adex", text: "Dexterity" },
+            { value: "aint", text: "Intelligence" },
+            { value: "asta", text: "Stamina" },
+            { value: "astr", text: "Strength" },
+            { value: "awis", text: "Wisdom" }
+        ]
+    },
+    {
+        label: "Heroic Stats",
+        items: [
+            { value: "heroic_agi", text: "Heroic Agility" },
+            { value: "heroic_cha", text: "Heroic Charisma" },
+            { value: "heroic_dex", text: "Heroic Dexterity" },
+            { value: "heroic_int", text: "Heroic Intelligence" },
+            { value: "heroic_sta", text: "Heroic Stamina" },
+            { value: "heroic_str", text: "Heroic Strength" },
+            { value: "heroic_wis", text: "Heroic Wisdom" }
+        ]
+    },
+    {
+        label: "Resists (Heroic Included)",
+        items: [
+            { value: "cr", text: "Resist Cold" },
+            { value: "dr", text: "Resist Disease" },
+            { value: "fr", text: "Resist Fire" },
+            { value: "mr", text: "Resist Magic" },
+            { value: "pr", text: "Resist Poison" }
+        ]
+    },
+    {
+        label: "Mod 1s",
+        items: [
+            { value: "attack", text: "Attack" },
+            { value: "haste", text: "Haste" },
+            { value: "regen", text: "HP Regeneration" },
+            { value: "manaregen", text: "Mana Regeneration" },
+            { value: "enduranceregen", text: "Endurance Regeneration" },
+            { value: "healamt", text: "Healing Amount" },
+            { value: "spelldmg", text: "Spell Damage" }
+        ]
+    },
+    {
+        label: "Mod 2s",
+        items: [
+            { value: "accuracy", text: "Accuracy" },
+            { value: "avoidance", text: "Avoidance" },
+            { value: "combateffects", text: "Combat Effects" },
+            { value: "damageshield", text: "Damage Shielding" },
+            { value: "dotshielding", text: "DoT Shield" },
+            { value: "shielding", text: "Shielding" },
+            { value: "spellshield", text: "Spell Shield" },
+            { value: "strikethrough", text: "Strikethrough" },
+            { value: "stunresist", text: "Stun Resist" }
+        ]
+    }
+];
+
+/* ============================================================
+   2. Build <select> HTML from JSON
+   ============================================================ */
+function buildSelect(name, selectedValue = "none") {
+    let html = `<select name="${name}">`;
+    html += `<option value="none"><--Select Stat--></option>`;
+
+    STAT_OPTIONS.forEach(group => {
+        html += `<option value="none">==${group.label}==</option>`;
+        group.items.forEach(item => {
+            const sel = item.value === selectedValue ? "selected" : "";
+            html += `<option value="${item.value}" ${sel}>${item.text}</option>`;
+        });
+    });
+
+    html += `</select>`;
+    return html;
+}
+
+/* ============================================================
+   3. Add Filter Row
+   ============================================================ */
+let filterId = 1;
+function addFilterRow(selected = "none", value = 1) {
+    const selectHTML = buildSelect(`stat_${filterId}`, selected);
+
+    $("#stat_filters").append(`
+        <tr>
+            <td>${selectHTML}</td>
+            <td><input name="stat_val_${filterId}" size="3" value="${value}"></td>
+            <td><input type="button" class="removerow" value="-"></td>
+        </tr>
+    `);
+
     filterId++;
-    $(".removerow").on('click', function() {
-	    $(this).parent().parent().remove();
-	});
-};
-</script>
-<script>
+}
+
+/* ============================================================
+   4. Add Weight Row
+   ============================================================ */
+let weightId = 1;
+function addWeightRow(selected = "none", value = 1) {
+    const selectHTML = buildSelect(`weight_${weightId}`, selected);
+
+    $("#stat_weights").append(`
+        <tr>
+            <td>${selectHTML}</td>
+            <td><input name="stat_weight_${weightId}" size="3" value="${value}"></td>
+            <td><input type="button" class="removerow" value="-"></td>
+        </tr>
+    `);
+
+    weightId++;
+}
+
+/* ============================================================
+   5. Persistence: Save + Restore
+   ============================================================ */
+function saveFilters() {
+    const rows = [];
+
+    $("#stat_filters tr").each(function() {
+        const selectVal = $(this).find("select").val();
+        const val = $(this).find("input[name^='stat_val']").val();
+        if (selectVal !== undefined) {
+            rows.push({ selectVal, val });
+        }
+    });
+
+    localStorage.setItem("statFilters", JSON.stringify(rows));
+}
+
+function saveWeights() {
+    const rows = [];
+
+    $("#stat_weights tr").each(function() {
+        const selectVal = $(this).find("select").val();
+        const val = $(this).find("input[name^='stat_weight']").val();
+        if (selectVal !== undefined) {
+            rows.push({ selectVal, val });
+        }
+    });
+
+    localStorage.setItem("statWeights", JSON.stringify(rows));
+}
+
+function restoreFilters() {
+    const saved = JSON.parse(localStorage.getItem("statFilters") || "[]");
+    saved.forEach(row => addFilterRow(row.selectVal, row.val));
+}
+
+function restoreWeights() {
+    const saved = JSON.parse(localStorage.getItem("statWeights") || "[]");
+    saved.forEach(row => addWeightRow(row.selectVal, row.val));
+}
+
+/* ============================================================
+   6. Document Ready
+   ============================================================ */
 $(document).ready(function() {
 
-    $('textarea').keypress(function(event) {
+    // Restore saved rows
+    restoreFilters();
+    restoreWeights();
 
-        if (event.keyCode == 13) {
-            event.preventDefault();
+    // Add new rows
+    $("#add_filter").click(function() {
+        addFilterRow();
+        saveFilters();
+    });
+
+    $("#add_weight").click(function() {
+        addWeightRow();
+        saveWeights();
+    });
+
+    // Delegated remove handler (works for restored rows too)
+    $(document).on("click", ".removerow", function() {
+        const row = $(this).closest("tr");
+
+        if (row.closest("#stat_filters").length) {
+            row.remove();
+            saveFilters();
+        } else if (row.closest("#stat_weights").length) {
+            row.remove();
+            saveWeights();
+        } else {
+            row.remove();
         }
+    });
+
+    // Save on change of selects/inputs so Back restores latest values
+    $(document).on("change", "#stat_filters select, #stat_filters input[name^='stat_val']", function() {
+        saveFilters();
+    });
+
+    $(document).on("change", "#stat_weights select, #stat_weights input[name^='stat_weight']", function() {
+        saveWeights();
     });
 });
 </script>
-<script language="javascript" type="text/javascript">
-$(document).ready(function() {
-	$("#add_filter").click(function() {
-		$("#stat_filters").append(
-	"<tr> \
-	  <td> \
-	    <select name=\"stat_" + filterId + "\"> \
-	      <option value=\"none\"><b><--Select Stat--></b></option> \
-		  <option value=\"none\"><b>==Basic Attributes==</b></option> \
-		  <option value=\"hp\">Hit Points</option> \
-		  <option value=\"mana\">Mana</option> \
-		  <option value=\"endur\">Endurance</option> \
-		  <option value=\"ac\">Armor Class</option> \
-		  <option value=\"none\"><b>==Base Stats==</b></option> \
-		  <option value=\"aagi\">Agility</option> \
-		  <option value=\"acha\">Charisma</option> \
-		  <option value=\"adex\">Dexterity</option> \
-		  <option value=\"aint\">Intelligence</option> \
-		  <option value=\"asta\">Stamina</option> \
-		  <option value=\"astr\">Strength</option> \
-		  <option value=\"awis\">Wisdom</option> \
-		  <option value=\"none\"><b>==Heroic Stats==</b></option> \
-		  <option value=\"heroic_agi\">Heroic Agility</option> \
-		  <option value=\"heroic_cha\">Heroic Charisma</option> \
-		  <option value=\"heroic_dex\">Heroic Dexterity</option> \
-		  <option value=\"heroic_int\">Heroic Intelligence</option> \
-		  <option value=\"heroic_sta\">Heroic Stamina</option> \
-		  <option value=\"heroic_str\">Heroic Strength</option> \
-		  <option value=\"heroic_wis\">Heroic Wisdom</option> \
-		  <option value=\"none\"><b>==Resists (Heroic Included)==</b></option> \
-		  <option value=\"cr\">Resist Cold</option> \
-		  <option value=\"dr\">Resist Disease</option> \
-		  <option value=\"fr\">Resist Fire</option> \
-		  <option value=\"mr\">Resist Magic</option> \
-		  <option value=\"pr\">Resist Poison</option> \
-		  <option value=\"none\"><b>==Mod 1s==</b></option> \
-		  <option value=\"attack\">Attack</option> \
-		  <option value=\"haste\">Haste</option> \
-		  <option value=\"regen\">HP Regeneration</option> \
-		  <option value=\"manaregen\">Mana Regeneration</option> \
-		  <option value=\"enduranceregen\">Endurance Regeneration</option> \
-		  <option value=\"healamt\">Healing Amount</option> \
-		  <option value=\"spelldmg\">Spell Damage</option> \
-		  <option value=\"none\"><b>==Mod 2s==</b></option> \
-		  <option value=\"accuracy\">Accuracy</option> \
-		  <option value=\"avoidance\">Avoidance</option> \
-		  <option value=\"combateffects\">Combat Effects</option> \
-		  <option value=\"damageshield\">Damage Shielding</option> \
-		  <option value=\"dotshielding\">DoT Shield</option> \
-		  <option value=\"shielding\">Shielding</option> \
-		  <option value=\"spellshield\">Spell Shield</option> \
-		  <option value=\"strikethrough\">Strikethrough</option> \
-		  <option value=\"stunresist\">Stun Resist</option> \
-		</select> \
-	  </td> \
-	  <td><input name=\"stat_val_" + filterId + "\" size=\"3\" value=\"1\"></td> \
-	  <td> \
-	    <input type=\"button\" class=\"removerow\" value=\"-\"> \
-	  </td> \
-	</tr>");
-		filterId++;
-		$(".removerow").on('click', function() {
-			$(this).parent().parent().remove();
-		});
-	});
-	$("#add_weight").click(function() {
-		$("#stat_weights").append(
-"<tr> \
-  <td> \
-    <select name=\"weight_" + weightId + "\"> \
-	      <option value=\"none\"><b><--Select Stat--></b></option> \
-		  <option value=\"none\"><b>==Basic Attributes==</b></option> \
-		  <option value=\"hp\">Hit Points</option> \
-		  <option value=\"mana\">Mana</option> \
-		  <option value=\"endur\">Endurance</option> \
-		  <option value=\"ac\">Armor Class</option> \
-		  <option value=\"none\"><b>==Base Stats==</b></option> \
-		  <option value=\"aagi\">Agility</option> \
-		  <option value=\"acha\">Charisma</option> \
-		  <option value=\"adex\">Dexterity</option> \
-		  <option value=\"aint\">Intelligence</option> \
-		  <option value=\"asta\">Stamina</option> \
-		  <option value=\"astr\">Strength</option> \
-		  <option value=\"awis\">Wisdom</option> \
-		  <option value=\"none\"><b>==Heroic Stats==</b></option> \
-		  <option value=\"heroic_agi\">Heroic Agility</option> \
-		  <option value=\"heroic_cha\">Heroic Charisma</option> \
-		  <option value=\"heroic_dex\">Heroic Dexterity</option> \
-		  <option value=\"heroic_int\">Heroic Intelligence</option> \
-		  <option value=\"heroic_sta\">Heroic Stamina</option> \
-		  <option value=\"heroic_str\">Heroic Strength</option> \
-		  <option value=\"heroic_wis\">Heroic Wisdom</option> \
-		  <option value=\"none\"><b>==Resists (Heroic Included)==</b></option> \
-		  <option value=\"cr\">Resist Cold</option> \
-		  <option value=\"dr\">Resist Disease</option> \
-		  <option value=\"fr\">Resist Fire</option> \
-		  <option value=\"mr\">Resist Magic</option> \
-		  <option value=\"pr\">Resist Poison</option> \
-		  <option value=\"none\"><b>==Mod 1s==</b></option> \
-		  <option value=\"attack\">Attack</option> \
-		  <option value=\"haste\">Haste</option> \
-		  <option value=\"regen\">HP Regeneration</option> \
-		  <option value=\"manaregen\">Mana Regeneration</option> \
-		  <option value=\"enduranceregen\">Endurance Regeneration</option> \
-		  <option value=\"healamt\">Healing Amount</option> \
-		  <option value=\"spelldmg\">Spell Damage</option> \
-		  <option value=\"none\"><b>==Mod 2s==</b></option> \
-		  <option value=\"accuracy\">Accuracy</option> \
-		  <option value=\"avoidance\">Avoidance</option> \
-		  <option value=\"combateffects\">Combat Effects</option> \
-		  <option value=\"damageshield\">Damage Shielding</option> \
-		  <option value=\"dotshielding\">DoT Shield</option> \
-		  <option value=\"shielding\">Shielding</option> \
-		  <option value=\"spellshield\">Spell Shield</option> \
-		  <option value=\"strikethrough\">Strikethrough</option> \
-		  <option value=\"stunresist\">Stun Resist</option> \
-	</select> \
-  </td> \
-  <td> \
-    <input name=\"stat_weight_" + weightId + "\" size=\"3\" value=\"1\"> \
-  </td> \
-  <td> \
-    <input type=\"button\" class=\"removerow\" value=\"-\"> \
-  </td> \
-</tr>");
-		weightId++;
-		$(".removerow").on('click', function() {
-			$(this).parent().parent().remove();
-		});
-	});
-});
-
+<script>
 //If parent option is changed
 function configureDropDownLists(ddl1, ddl2) {
 //let's create arrays
@@ -380,52 +333,13 @@ function createOption(ddl, text, value) {
 };
 
 </script>
-<script>
-    function doWeightsUpdate(selectObject) {
-    $("#stat_weights tr").remove();
-    if (selectObject.value == 'none') {
-        return;
-    }
-    raw_data = selectObject.value;
-    const dataArray = raw_data.split("|-|");
-    data = JSON.parse(dataArray[1]);
-    set = dataArray[0];
-      for (let sub_key in data[set]) {
-        var name = sub_key;
-        var stat = data[set][sub_key]['stat'];
-        var value = data[set][sub_key]['value'];
-        updateWeightsTable(stat, value, name);
-      }
-};
-</script>
-<script>
-    function doRestrictUpdate(selectObject) {
-    $("#stat_filters tr").remove();
-    if (selectObject.value == 'none') {
-        return;
-    }
-    raw_data = selectObject.value;
-    const dataArray = raw_data.split("|-|");
-    data = JSON.parse(dataArray[1]);
-    set = dataArray[0];
-      for (let sub_key in data[set]) {
-        var name = sub_key;
-        var stat = data[set][sub_key]['stat'];
-        var value = data[set][sub_key]['value'];
-        updateRestrictTable(stat, value, name);
-      }
-};
-</script>
 {% set classes = ['Bard', 'Beastlord', 'Berserker', 'Cleric', 'Druid', 'Enchanter', 'Magician', 'Monk', 'Necromancer',
 'Paladin', 'Ranger', 'Rogue', 'Shadow Knight', 'Shaman', 'Warrior', 'Wizard'] %}
 {% set slots = ['Arms', 'Back', 'Charm', 'Chest', 'Ear', 'Face', 'Feet', 'Finger', 'Hands', 'Head',
 'Legs', 'Neck', 'Primary', 'Range', 'Secondary', 'Shoulders', 'Waist', 'Wrist'] %}
 {% set i_types = ['Augment', 'Shield'] %}
 <h4>Armor Search</h4>
-<form actions="{{ url_for('item_search') }}" method="post" class="add-entry" id="demoForm" target="_blank">
-    {% if not restricts and not weights %}
-      Don't see your restrict or weight sets? <a href="{{url_for('user_home')}}">Login</a> here!<br>
-    {% endif %}
+<form actions="{{ url_for('item_search') }}" method="post" class="add-entry" id="demoForm">
     <input type="submit" value="Search"><br>
     <table id="searchOpts">
         <tr>
@@ -486,6 +400,8 @@ function createOption(ddl, text, value) {
                                 {% endfor %}
                                 {% endfor %}</select></td>
                         </tr>
+                    </table>
+                    <table>
                         <tr>
                             <td colspan="3">
                                 <abbr title="Only items with the provided stats will be searched for.  Heroic resists are included when resists are selected.  Delay is inverted (e.g. delay 20 will get delay 20 and lower.)">

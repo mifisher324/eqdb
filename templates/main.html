@@ -13,7 +13,7 @@ function doStuff() {
     });
 }
 </script>
-<h1><center>EQDB - The Heroes Journey Database Search</center></h1><br>
+<h1><center>EQDB - EMU Database Search</center></h1><br>
 <form action="{{ url_for('all_search') }}" method="post" class="add-entry" id="demoForm">
 <center>                <textarea rows="1" class="nameentry" name="all_names"
                                            onKeyPress="return checkSubmit(event)"></textarea>
@@ -30,6 +30,5 @@ function doStuff() {
 <br>
 <a href="/search/armor">Advanced Gear Search: Armor</a> --
 <a href="/search/weapon">Advanced Gear Search: Weapons</a> --
-<a href="/identify">(MINIGAME) Identify Unknown Items</a>
     </center>
 {% endblock %}

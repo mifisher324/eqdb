@@ -2330,7 +2330,7 @@ def get_stat_weights(weights, item, bane_body=None):
             else:
                 value += item.banedmgraceamt * weights[weight]
         else:
-            value += getattr(item, weight) * weights[weight]
+            value += int(getattr(item, weight)) * weights[weight]
     return value
 
 

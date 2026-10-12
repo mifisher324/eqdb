@@ -200,6 +200,9 @@
     {% if show_proc %}
     <th>Proc Name</th>
     {% endif %}
+    {% if show_proc_max_dmg %}
+    <th>Proc Damage</th>
+    {% endif %}
     </thead>
 {% for entry in data %}
     <tr>
@@ -392,6 +395,9 @@
         {% endif %}
         {% if show_proc %}
         <td><a href="/spell/detail/{{entry.proc_id}}" data-url="{{entry.proc_id}}" class="spell-tooltip-link">{{entry.proc_name}}</a></td>
+        {% endif %}
+        {% if show_proc_max_dmg %}
+        <td>{{entry.proc_max_damage | abs}}</td>
         {% endif %}
     </tr>
 {% endfor %}
