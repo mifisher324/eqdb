@@ -1,8 +1,11 @@
 {% extends "layout.html" %}
-{% block body %}
 {% if data is none %}
 <h3>Tradeskill data not found or does not exist</h3>
 {% else %}
+{% block title %}
+EQDB :: Recipe :: {{data.name}}
+{% endblock %}
+{% block body %}
 <div style="display: flex; justify-content: center;">
 <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" id="basicstats">
     <center><h5>Tradeskill Information</h5></center>
@@ -51,7 +54,7 @@
         {% for entry in data.components %}
         <tr>
             <td><div class="icon-container"><span class="item-icon" style='background-image:url(/static/item_icons/item_{{entry.icon}}.png);background-position:-200px -40px;display:inline-block;height:40px;width:40px;' title='Icon {{entry.icon}}'></span></div></td>
-            <td><a href="{{url_for('item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a></td>
+            <td><a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a></td>
             <td>{{entry.count}}</td>
         </tr>
         {% endfor %}
@@ -76,7 +79,7 @@
         {% for entry in data.success %}
         <tr>
             <td><div class="icon-container"><span class="item-icon" style='background-image:url(/static/item_icons/item_{{entry.icon}}.png);background-position:-200px -40px;display:inline-block;height:40px;width:40px;' title='Icon {{entry.icon}}'></span></div></td>
-            <td><a href="{{url_for('item_detail', item_id=entry.item_id)}}">{{entry.item_name}}</a></td>
+            <td><a href="{{url_for('items.item_detail', item_id=entry.item_id)}}">{{entry.item_name}}</a></td>
             <td>{{entry.count}}</td>
         </tr>
         {% endfor %}
@@ -93,12 +96,12 @@
         {% for entry in data.fail %}
         <tr>
             <td><div class="icon-container"><span class="item-icon" style='background-image:url(/static/item_icons/item_{{entry.icon}}.png);background-position:-200px -40px;display:inline-block;height:40px;width:40px;' title='Icon {{entry.icon}}'></span></div></td>
-            <td><a href="{{url_for('item_detail', item_id=entry.item_id)}}">{{entry.item_name}}</a></td>
+            <td><a href="{{url_for('items.item_detail', item_id=entry.item_id)}}">{{entry.item_name}}</a></td>
             <td>{{entry.count}}</td>
         </tr>
         {% endfor %}
     </table>
 </div>
 </div>
-{% endif %}
 {% endblock %}
+{% endif %}

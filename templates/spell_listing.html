@@ -20,40 +20,76 @@ $(document).ready(function() {
 
 
 </script>
-<h3>Spell Listing</h3>
-<form actions="{{ url_for('spell_listing') }}" method="post" class="add-entry" id="demoForm">
-    <table>
-        <tr>
-            <td align="right">Class:</td>
-            <td>    <select name="class_id" id="class_id">
-        <option value="None" selected="selected">--Select Class--</option>
-        <option value="8">Bard</option>
-        <option value="15">Beastlord</option>
-        <option value="16">Berserker</option>
-        <option value="2">Cleric</option>
-        <option value="6">Druid</option>
-        <option value="14">Enchanter</option>
-        <option value="13">Magician</option>
-        <option value="7">Monk</option>
-        <option value="11">Necromancer</option>
-        <option value="3">Paladin</option>
-        <option value="4">Ranger</option>
-        <option value="9">Rogue</option>
-        <option value="5">Shadow Knight</option>
-        <option value="10">Shaman</option>
-        <option value="12">Wizard</option>
-        <option value="1">Warrior</option>
-</select></td>
-        </tr>
-        <tr>
-            <td align="right">Minimum Level:</td>
-            <td><input type="number" id="min_level" name="min_level" min="1" max="65" value="1"></td>
-        </tr>
-        <tr>
-            <td align="right">Maximum Level:</td>
-            <td><input type="number" id="max_level" name="max_level" min="1" max="65" value="65"></td>
-        </tr>
-    </table><br>
-<input type="submit" value="Search">
-</form>
+<center><h3>Spell Listing</h3></center>
+    <div style="display: flex; justify-content: center;">
+        <div class="row">
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="warrior">
+            <a href="{{url_for('spells.spell_listing', class_id=1)}}"><center><img src="/static/monograms/1.gif"></a><br>
+            Warrior</center>
+        </div>
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="cleric">
+            <a href="{{url_for('spells.spell_listing', class_id=2)}}"><center><img src="/static/monograms/2.gif"></a><br>
+            Cleric</center>
+        </div>
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="paladin">
+            <a href="{{url_for('spells.spell_listing', class_id=3)}}"><center><img src="/static/monograms/3.gif"></a><br>
+            Paladin</center>
+        </div>
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="ranger">
+            <a href="{{url_for('spells.spell_listing', class_id=4)}}"><center><img src="/static/monograms/4.gif"></a><br>
+            Ranger</center>
+        </div>
+            </div>
+        <div class="row">
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="shadowknight">
+            <a href="{{url_for('spells.spell_listing', class_id=5)}}"><center><img src="/static/monograms/5.gif"></a><br>
+            Shadow Knight</center>
+        </div>
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="druid">
+            <a href="{{url_for('spells.spell_listing', class_id=6)}}"><center><img src="/static/monograms/6.gif"></a><br>
+            Druid</center>
+        </div>
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="monk">
+            <a href="{{url_for('spells.spell_listing', class_id=7)}}"><center><img src="/static/monograms/7.gif"></a><br>
+            Monk</center>
+        </div>
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="bard">
+            <a href="{{url_for('spells.spell_listing', class_id=8)}}"><center><img src="/static/monograms/8.gif"></a><br>
+            Bard</center>
+        </div></div>
+        <div class="row">
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="rogue">
+            <a href="{{url_for('spells.spell_listing', class_id=9)}}"><center><img src="/static/monograms/9.gif"></a><br>
+            Rogue</center>
+        </div>
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="shaman">
+            <a href="{{url_for('spells.spell_listing', class_id=10)}}"><center><img src="/static/monograms/10.gif"></a><br>
+            Shaman</center>
+        </div>
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="necro">
+            <a href="{{url_for('spells.spell_listing', class_id=11)}}"><center><img src="/static/monograms/11.gif"></a><br>
+            Necromancer</center>
+        </div>
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="wizard">
+            <a href="{{url_for('spells.spell_listing', class_id=12)}}"><center><img src="/static/monograms/12.gif"></a><br>
+            Wizard</center>
+        </div></div>
+        <div class="row">
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="magician">
+            <a href="{{url_for('spells.spell_listing', class_id=13)}}"><center><img src="/static/monograms/13.gif"></a><br>
+            Magician</center>
+        </div>
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="enchanter">
+            <a href="{{url_for('spells.spell_listing', class_id=14)}}"><center><img src="/static/monograms/14.gif"></a><br>
+            Enchanter</center>
+        </div>
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="beastlord">
+            <a href="{{url_for('spells.spell_listing', class_id=15)}}"><center><img src="/static/monograms/15.gif"></a><br>
+            Beastlord</center>
+        </div>
+        <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="berserker">
+            <a href="{{url_for('spells.spell_listing', class_id=16)}}"><center><img src="/static/monograms/16.gif"></a><br>
+            Berserker</center>
+        </div></div>
+    </div>
 {% endblock %}

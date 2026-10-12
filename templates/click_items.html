@@ -1,0 +1,208 @@
+{% extends "layout.html" %}
+{% block body %}
+<script>
+function configureDropDownLists(ddl1, ddl2) {
+//let's create arrays
+	var Sympathetic = [
+		{display: "--Select Type--", value: "None"},
+		{display: "Sympathetic Healing", value: "SympatheticHealing" },
+    	{display: "Sympathetic Strike", value: "SympatheticStrike" }];
+
+	var Statistics = [
+		{display: "--Select Type--", value: "None"},
+    	{display: "AC", value: "AC" },
+    	{display: "Attack", value: "ATK" },
+    	{display: "Base Stats", value: "Stats" },
+    	{display: "Haste", value: "Haste" },
+    	{display: "HP Regen", value: "HPRegen" },
+		{display: "Mana Regen", value: "ManaRegen" },
+    	{display: "Maximum HP", value: "MaxHP" },
+		{display: "Maximum Mana", value: "MaxMana" },
+		{display: "Overhaste", value: "Overhaste" },
+		{display: "Resists", value: "Resists" },
+		{display: "Singing", value: "Singing"}];
+
+	var Buffs = [
+		{display: "--Select Type--", value: "None"},
+		{display: "Damage Shield", value: "DamageShield"},
+		{display: "Enduring Breath", value: "EnduringBreath"},
+		{display: "Illusion", value: "Illusion"},
+		{display: "Invisibility", value: "Invis"},
+		{display: "Invisibility versus Undead", value: "InvisToUndead"},
+		{display: "Invisibility versus Animals", value: "InvisToAnimal"},
+		{display: "Invulnerability", value: "Invuln"},
+		{display: "Levitate", value: "Levitate"},
+		{display: "Miscellaneous", value: "Misc"},
+		{display: "Movement Speed", value: "Movement Speed"},
+		{display: "Proc Buffs", value: "ProcBuff"},
+		{display: "See Invisibility", value: "SeeInvis"}];
+
+	var Defensive = [
+	    {display: "--Select Type--", value: "None"},
+	    {display: "Cure Curse", value: "CureCurse"},
+	    {display: "Cure Disease", value: "CureDisease"},
+	    {display: "Cure Poison", value: "CurePoison"},
+	    {display: "Endurance", value: "Endurance"},
+	    {display: "Heal", value: "Heal"},
+	    {display: "Mana", value: "Mana"},
+	    {display: "Rune", value: "Rune"},
+	    {display: "Spell Absorb", value: "SpellRune"}]
+
+	var Offensive = [
+	    {display: "--Select Type--", value: "None"},
+	    {display: "Blind", value: "Blind"},
+	    {display: "Charm", value: "Charm"},
+	    {display: "Damage Over Time", value: "DOT"},
+	    {display: "Decrease ATK", value: "DecreaseATK"},
+	    {display: "Direct Damage", value: "DD"},
+	    {display: "Dispel", value: "Dispel"},
+	    {display: "Dispel (Beneficial)", value: "DispelBene"},
+	    {display: "Fear", value: "Fear"},
+	    {display: "Lifetap", value: "Lifetap"},
+	    {display: "Root", value: "Root"},
+	    {display: "Slow", value: "Slow"},
+	    {display: "Snare", value: "Snare"},
+	    {display: "Stun", value: "Stun"},
+	    {display: "Swarm Pet", value: "SwarmPet"}]
+
+	var Pets = [
+	    {display: "All Pet Effects", value: "None"}]
+
+	var Miscellaneous = [
+	    {display: "--Select Type--", value: "None"},
+	    {display: "Miscellaneous", value: "Misc"},
+	    {display: "Summon Item", value: "SummonItem"},
+	    {display: "Transport", value: "Transport"},
+	    {display: "Shrink", value: "Shrink"},
+	    {display: "Grow", value: "Grow"}]
+
+  	switch (ddl1.value) {
+    case 'Sympathetic':
+      ddl2.options.length = 0;
+      for (i = 0; i < Sympathetic.length; i++) {
+        createOption(ddl2, Sympathetic[i].display, Sympathetic[i].value);
+      }
+      break;
+    case 'Statistics':
+      ddl2.options.length = 0;
+      for (i = 0; i < Statistics.length; i++) {
+        createOption(ddl2, Statistics[i].display, Statistics[i].value);
+      }
+      break;
+    case 'Buffs':
+      ddl2.options.length = 0;
+      for (i = 0; i < Buffs.length; i++) {
+        createOption(ddl2, Buffs[i].display, Buffs[i].value);
+      }
+      break;
+    case 'Defensive':
+      ddl2.options.length = 0;
+      for (i = 0; i < Defensive.length; i++) {
+        createOption(ddl2, Defensive[i].display, Defensive[i].value);
+      }
+      break;
+    case 'Offensive':
+      ddl2.options.length = 0;
+      for (i = 0; i < Offensive.length; i++) {
+        createOption(ddl2, Offensive[i].display, Offensive[i].value);
+      }
+      break;
+    case 'Pets':
+      ddl2.options.length = 0;
+      for (i = 0; i < Pets.length; i++) {
+        createOption(ddl2, Pets[i].display, Pets[i].value);
+      }
+      break;
+    case 'Misc':
+      ddl2.options.length = 0;
+      for (i = 0; i < Miscellaneous.length; i++) {
+        createOption(ddl2, Miscellaneous[i].display, Miscellaneous[i].value);
+      }
+      break;
+    default:
+      ddl2.options.length = 0;
+      break;
+  }
+};
+
+function createOption(ddl, text, value) {
+  var opt = document.createElement('option');
+  opt.value = value;
+  opt.text = text;
+  ddl.options.add(opt);
+};
+</script>
+{% set classes = ['Bard', 'Beastlord', 'Berserker', 'Cleric', 'Druid', 'Enchanter', 'Magician', 'Monk', 'Necromancer',
+'Paladin', 'Ranger', 'Rogue', 'Shadow Knight', 'Shaman', 'Warrior', 'Wizard'] %}
+<center><h3>Click Item Search</h3></center>
+<form action="{{ url_for('items.click_item_search') }}" method="post" class="add-entry" id="demoForm">
+    <table>
+        <tr>
+            <td>Exclude Eras:</td>
+            <td><select multiple name="eras" size="6">
+                <option value="Classic">Classic</option>
+                <option value="Kunark">Kunark</option>
+                <option value="Velious">Velious</option>
+                <option value="Luclin">Luclin</option>
+                <option value="Planes">Planes of Power</option>
+                <option value="LDoN">Lost Dungeons of Norrath</option>
+            </select></td>
+        </tr>
+        <tr>
+            <td>Class 1:</td>
+            <td><select name="g_class_1">
+                <option value="None" selected="selected">-- Pick Class --</option>
+                {% for option in classes %}
+                <option value="{{option}}">{{option}}</option>
+                {% endfor %}
+            </select></td>
+        </tr>
+        <tr>
+            <td>Class 2:</td>
+            <td><select name="g_class_2">
+                <option value="None" selected="selected">-- Pick Class --</option>
+                {% for option in classes %}
+                <option value="{{option}}">{{option}}</option>
+                {% endfor %}
+            </select></td>
+        </tr>
+        <tr>
+            <td>Class 3:</td>
+            <td><select name="g_class_3">
+                <option value="None" selected="selected">-- Pick Class --</option>
+                {% for option in classes %}
+                <option value="{{option}}">{{option}}</option>
+                {% endfor %}
+            </select></td>
+        </tr>
+        <tr>
+            <td>Click Category:</td>
+            <td><select name="click_category" id="click_category"
+                        onclick="configureDropDownLists(this,document.getElementById('click_type'))">
+                <option value="All" selected="selected">--All Clicks--</option>
+                <option value="Defensive">Defensive / Restorative</option>
+                <option value="Offensive">Offensive</option>
+                <option value="Misc">Miscellaneous Buffs</option>
+                <option value="Pets">Pet Buffs/Effects</option>
+                <option value="Statistics">Statistic Buffs</option>
+                <option value="Sympathetic">Sympathetics</option>
+            </select></td>
+        </tr>
+        <tr>
+            <td>Click Type:</td>
+            <td><select name="click_type" id="click_type"><!-- js populates --></select></td>
+        </tr>
+        <tr>
+            <td><abbr title="Exclude items that have charges that clicking the item consumes">Exclude Charges</abbr>
+            </td>
+            <td><input type="checkbox" name="charges" value="Exclude"></td>
+        </tr>
+        <tr>
+            <td>Level (and less) to Click</td>
+            <td><input type="number" id="level" name="level" min="1" max="65" value="65"></td>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" value="Search">
+</form>
+{% endblock %}

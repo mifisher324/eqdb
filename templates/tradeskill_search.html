@@ -24,7 +24,7 @@ $(document).ready(function() {
     });
 });
 </script>
-<form action="{{ url_for('tradeskill_search') }}" method="post" class="add-entry" id="demoForm">
+<form action="{{ url_for('tradeskills.tradeskill_search') }}" method="post" class="add-entry" id="demoForm">
     <table>
         <tr>
             <td align="right">Recipe/Item Name (partial allowed):</td>
@@ -32,7 +32,7 @@ $(document).ready(function() {
         </tr>
         <tr>
             <td align="right">Trivial Maximum:</td>
-            <td><input type="number" id="trivial" name="trivial" min="0" max="500" value="100"></td>
+            <td><input type="number" id="trivial" name="trivial" min="0" max="999" value="999"></td>
         </tr>
         <tr>
             <td align="right">Trivial Minimum:</td>

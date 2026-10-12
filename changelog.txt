@@ -1,56 +1,23 @@
-==2.0.2==
-DEPLOYED: 5/5/2024
-* Added Recourse effects to Spell Detail
-* Introduced an api to query for item data
-  * https://eqdb.net/api/v1/items?id=<item_id> will get you the exact item JSON if the ID exists,
-    or an empty JSON if it does not.
-  * https://eqdb.net/api/v1/items?name=<name even with space> will get you the JSON for the first item it finds,
-    or an empty JSON if it doesn't find anything.
-* Fixed a bug with spells that summon items
+==3.0==
+* Weapon and Armor search:
+    ** Adding / removing a restriction filter no longer moves the previous options to the right
+    ** Stat Restrictions and Stat Weights now use your browser's cache and will survive going off of the associated
+    search page (and will also automatically restore themselves when you come back later).
+    ** Search results no longer open in a new tab
+    ** Fixed searching for combat effects mod 2
+    ** Changed the expansions to use to be controlled entirely by the configuration setting for era
 
-==2.0.1==
-DEPLOYED: 5/4/2024
-* Fixed display of links on class spell listing page
-* Optimized Spell Listing code to speed up returns
-    * Spell listing will no longer link to items being summoned, but the spell details for that spell still will.
-* Fixed a bug with auto-inserted NPC IDs not matching expected NPC ID standard causing issues with their associated zone
-* Implemented the formula for Splurt type progressively strengthening DoTs
-* Removed out-of-era item drop sources on Item Detail page.
+* Weapon Search
+    ** The Item Type now updates to only the allowed options for the slot selected
+    ** A new option for procs has been added, All Direct Damage, which will also include a column that shows the
+    base damage of the proc.
 
-==2.0==
-DEPLOYED: 5/2/2025
-* A massive site upgrade has been completed, adding many more features to allow EQDB to be a fully supported THJ database
-search site instead of focusing just on gear.
-* Search has been added for the following things found in the game:
-	* Items
-	* Spells
-	* Zones
-	* NPCs
-	* Tradeskills
-	* Factions
-* Details pages have been added for the following things found in the game:
-	* Items
-	* Spells
-	* Zones
-	* NPCs
-	* Tradeskills
-	* Factions
-	* Pets
-* Listings have been added for the following things found in the game:
-	* Zones By Expansion
-	* Spells By Class
-	* Pets By Class
-* All links have been changed to reference internal EQDB features instead of outside sources.
-* Spell Tooltips have been added.
-	* The SPA parser is still a bit wonky, let Convection know if you find issues!
-* Gear Search for both armor and weapons have been moved into the Tools section drop down
-* Navbar Icon and front page image have been kindly provided by the CS team of The Heroes Journey EMU
-* Thanks to Brewall for the maps and Akkadius for the spell and item Icons!
-* Special thanks to Arzo, Flxff, Valorfel, Drake, Ammordius, and the Dev and CS Teams of The Heroes Journey EMU for their testing assistance!
+* Added initial support for LDoN
+    ** Dropped items will now be shown when searching for Weapons or Armor.
+    ** Vendor items do not show correctly yet.
+    ** Monster mission items have been added speculatively but may not show due to data differences.
 
---For Beta Users, Changes on Update to 2.0--
-* Spells are no longer listed twice on all search results
-* Items with vendor sources now show the zone the vendor is in
-* Items with vendor sources no longer show out-of-era vendors
-* Items shown on spell details page now show their icon
-* Items shown on spell details page now have item tooltips
+* Miscellaneous
+    ** Inverted the Class, Slot and Augment Type display where used (tooltips, item detail, etc) to more closely
+       match game tooltips
+    ** Scrubbed certain things off the site that are no longer relevant

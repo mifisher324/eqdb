@@ -431,6 +431,14 @@
             <td nowrap="1" colspan='3'>Effect: {{item.inst_name}} (Worn)</td>
         </tr>
         {% endif %}
+            {% if item.augtype %}
+            <tr>
+                <td nowrap="1" colspan="3">Aug Slot Types: {{item.augtype}}</td>
+            </tr>
+            <tr>
+                <td nowrap="1" colspan="3">Restrictions: {{item.augrestrict}}</td>
+            </tr>
+            {% endif %}
         {% if "bane_body_name" in item %}
         <tr>
             <td nowrap="1" colspan='3'>Bane Dmg: {{item.bane_body_name}} +{{item.bane_body_amount}}</td>

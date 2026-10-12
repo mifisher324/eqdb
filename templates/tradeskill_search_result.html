@@ -20,7 +20,7 @@
     </thead>
     {% for entry in data %}
      <tr>
-         <td><a href="{{url_for('tradeskill_detail', ts_id=entry.ts_id)}}">{{entry.ts_name}}</a></td>
+         <td><a href="{{url_for('tradeskills.tradeskill_detail', ts_id=entry.ts_id)}}">{{entry.ts_name}}</a></td>
          <td>{{entry.trivial}}</td>
      </tr>
     {% endfor %}

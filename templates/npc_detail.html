@@ -1,8 +1,11 @@
 {% extends "layout.html" %}
-{% block body %}
 {% if data is none %}
 <h3>NPC data not found or does not exist</h3>
 {% else %}
+{% block title %}
+EQDB :: NPC :: {{data.name}}
+{% endblock %}
+{% block body %}
 <center><h3>{{data.name}}</h3></center>
 <div style="display: flex; justify-content: center;">
 <div style="height:1px; margin-top:2em;" xmlns="http://www.w3.org/1999/html"></div>
@@ -122,7 +125,7 @@
     <h3>NPC Information</h3>
     <ul>
         <li>Expansion: {{data.expansion}}</li>
-        <li>Zone: <a href="{{url_for('zone_detail', zone_id=data.zone_id)}}">{{data.zone_name}}</a></li>
+        <li>Zone: <a href="{{url_for('zones.zone_detail', zone_id=data.zone_id)}}">{{data.zone_name}}</a></li>
         {% if not data.spawn_groups %}
          <li><b>This NPC spawn is triggered</b></li>
         {% endif %}
@@ -131,7 +134,16 @@
         <li>Race: {{data.race}}</li>
         <li>Body Type: {{data.bodytype}}</li>
         {% if data.faction %}
-         <li>Faction: <a href="{{url_for('faction_detail', faction_id=data.faction.faction_id)}}">{{data.faction.faction_name}}</a></li>
+         <li>Faction</li>
+          <ul>
+              {% for entry in data.faction %}
+                {% if entry.faction_amt > 0 %}
+                    <li><a href="{{url_for('factions.faction_detail', faction_id=entry.faction_id)}}">{{entry.faction_name}}</a> <font color="green">{{entry.faction_amt}}</font></li>
+                {% else %}
+                    <li><a href="{{url_for('factions.faction_detail', faction_id=entry.faction_id)}}">{{entry.faction_name}}</a> <font color="red">{{entry.faction_amt}}</font></li>
+                {% endif %}
+              {% endfor %}
+          </ul>
         {% endif %}
         <li>Min Hit: {{data.mindmg}}</li>
         <li>Max Hit: {{data.maxdmg}}</li>
@@ -164,14 +176,14 @@
          <summary>Spells</summary>
          {% for entry in data.spells %}
             {% if entry.proc_chance %}
-              <img src="/static/spell_icons/{{entry.icon}}.png">  <a href="{{url_for('spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.spell_name}}</a> ({{entry.spell_type}} {{entry.proc_chance}}% chance)<br>
+              <img src="/static/spell_icons/{{entry.icon}}.png">  <a href="{{url_for('spells.spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.spell_name}}</a> ({{entry.spell_type}} {{entry.proc_chance}}% chance)<br>
             {% else %}
-              <img src="/static/spell_icons/{{entry.icon}}.png">  <a href="{{url_for('spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.spell_name}}</a> ({{entry.spell_type}})<br>
+              <img src="/static/spell_icons/{{entry.icon}}.png">  <a href="{{url_for('spells.spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.spell_name}}</a> ({{entry.spell_type}})<br>
             {% endif %}
         {% endfor %}
         </details>
        {% endif %}
-        <br><a href="{{url_for('npc_raw', npc_id=data.id)}}">Raw Data</a>
+        <br><a href="{{url_for('npcs.npc_raw', npc_id=data.id)}}">Raw Data</a>
 </div></div>
 <div style="display: flex; justify-content: center;">
 <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="width: 1325px;" id="zone_links">
@@ -197,7 +209,7 @@
                 <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" id="{{entry}}">
                     <h6>{{entry}} - Probability: {{data['loot_lists'][entry]['probability']|int}}% - {{data['loot_lists'][entry]['mindrop']}} to {{data['loot_lists'][entry]['droplimit']}} drops</h6>
                         {% for sub_entry in data['loot_lists'][entry]['items'] %}
-                        <img src="/static/item_icons/item_{{sub_entry.icon}}.png">  <a href="{{url_for('item_detail', item_id=sub_entry.item_id)}}" data-url="{{sub_entry.item_id}}" class="tooltip-link">{{sub_entry.item_name}}</a> {{sub_entry.probability|int}}% Chance<br>
+                        <img src="/static/item_icons/item_{{sub_entry.icon}}.png">  <a href="{{url_for('items.item_detail', item_id=sub_entry.item_id)}}" data-url="{{sub_entry.item_id}}" class="tooltip-link">{{sub_entry.item_name}}</a> {{sub_entry.probability|int}}% Chance<br>
                         {% endfor %}
                     </div><br>
             {% endfor %}
@@ -206,17 +218,17 @@
         {% if data['merch'] %}
         <div class="tab-pane fade p-3 border-end border-bottom border-start bg-body-tertiary" id="merch" role="tabpanel" aria-labelledby="merch-tab">
             {% for entry in data['merch'] %}
-              <img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a><br>
+              <img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a><br>
             {% endfor %}
         </div>
         {% endif %}
         {% if data['spawn_groups'] %}
         <div class="tab-pane fade p-3 border-end border-bottom border-start bg-body-tertiary" id="spawns" role="tabpanel" aria-labelledby="spawns-tab">
             {% for entry in data['spawn_groups'] %}
-              <li>{{entry.name}}:: {{entry.x * -1}}, {{entry.y * -1}}, {{entry.z}} :: {{entry.respawn}}s respawn :: <abbr title="spawngroupID: {{entry.group_id}}, spawn2ID: {{entry.spawn_id}}">Spawn Info</abbr></li>
+              <li>{{entry.name}}:: {{entry.x * -1}}, {{entry.y * -1}}, {{entry.z}} :: {{entry.respawn}} respawn :: <abbr title="spawngroupID: {{entry.group_id}}, spawn2ID: {{entry.spawn_id}}">Spawn Info</abbr></li>
               <ul>
               {% for subentry in entry.spawn_npcs  %}
-                  <li><a href="{{url_for('npc_detail', npc_id=subentry.npc_id)}}">{{subentry.npc_name}}</a> ({{subentry.chance}}% chance)</li>
+                  <li><a href="{{url_for('npcs.npc_detail', npc_id=subentry.npc_id)}}">{{subentry.npc_name}}</a> ({{subentry.chance}}% chance)</li>
               {% endfor %}
               </ul>
             {% endfor %}
@@ -224,5 +236,5 @@
         {% endif %}
     </div>
 </div></div>
-{% endif %}
 {% endblock %}
+{% endif %}

@@ -2,6 +2,6 @@
 {% block body %}
 <h3>Search Results:</h3>
 {% for entry in data|sort(attribute='name') %}
-<img src="/static/spell_icons/{{entry.icon}}.png">  <a href="{{url_for('spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.name}}</a><br>
+<img src="/static/spell_icons/{{entry.icon}}.png">  <a href="{{url_for('spells.spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.name}}</a><br>
 {% endfor %}
 {% endblock %}

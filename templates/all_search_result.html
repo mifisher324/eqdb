@@ -7,7 +7,7 @@
         <center><h3>Items</h3></center>
         <ul>
     {% for entry in data.game_items %}
-        <li><img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.name}}</a></li>
+        <li><img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.name}}</a> (<a href="{{url_for('items.item_detail', item_id=entry.item_id+1000000)}}" data-url="{{entry.item_id+1000000}}" class="tooltip-link"> E </a>) (<a href="{{url_for('items.item_detail', item_id=entry.item_id+2000000)}}" data-url="{{entry.item_id+2000000}}" class="tooltip-link"> L </a>)</li>
     {% endfor %}
         </ul>
     </div>
@@ -17,7 +17,7 @@
         <center><h3>Spells</h3></center>
         <ul>
     {% for entry in data.spells %}
-        <li><img src="/static/spell_icons/{{entry.icon}}.png">  <a href="{{url_for('spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.name}}</a></li>
+        <li><img src="/static/spell_icons/{{entry.icon}}.png">  <a href="{{url_for('spells.spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.name}}</a></li>
     {% endfor %}
         </ul>
     </div>
@@ -27,7 +27,7 @@
         <center><h3>NPCs</h3></center>
         <ul>
     {% for entry in data.npcs %}
-        <li><a href="{{url_for('npc_detail', npc_id=entry.npc_id)}}">{{entry.name}}</a></li>
+        <li><a href="{{url_for('npcs.npc_detail', npc_id=entry.npc_id)}}">{{entry.name}}</a></li>
             <ul>
                 <li>{{entry.zone}} :: Level: {{entry.level}} :: HP: {{entry.hp}}</li>
                 </ul>
@@ -40,7 +40,7 @@
         <center><h3>Zones</h3></center>
         <ul>
     {% for entry in data.zones %}
-        <li><a href="{{url_for('zone_detail', zone_id=entry.zone_id)}}">{{entry.zone_name}}</a></li>
+        <li><a href="{{url_for('zones.zone_detail', zone_id=entry.zone_id)}}">{{entry.zone_name}}</a></li>
     {% endfor %}
         </ul>
     </div>
@@ -50,7 +50,7 @@
         <center><h3>Tradeskills</h3></center>
         <ul>
     {% for entry in data.tradeskill %}
-        <li><a href="{{url_for('tradeskill_detail', ts_id=entry.ts_id)}}">{{entry.ts_name}}</a></li>
+        <li><a href="{{url_for('tradeskills.tradeskill_detail', ts_id=entry.ts_id)}}">{{entry.ts_name}}</a></li>
     {% endfor %}
         </ul>
     </div>
@@ -60,7 +60,7 @@
         <center><h3>Factions</h3></center>
         <ul>
     {% for entry in data.factions %}
-        <li><a href="{{url_for('faction_detail', faction_id=entry.faction_id)}}">{{entry.faction_name}}</a></li>
+        <li><a href="{{url_for('factions.faction_detail', faction_id=entry.faction_id)}}">{{entry.faction_name}}</a></li>
     {% endfor %}
         </ul>
     </div>

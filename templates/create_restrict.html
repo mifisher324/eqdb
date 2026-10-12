@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+{% block body %}
+<script>
+window.onload = doStuff;
+
+function doStuff() {
+    var form = document.getElementById("demoForm");
+    form.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent default form submission
+            form.submit(); // Manually submit the form
+        }
+    });
+}
+</script>
+<script>
+$(document).ready(function() {
+
+    $('textarea').keypress(function(event) {
+
+        if (event.keyCode == 13) {
+            event.preventDefault();
+        }
+    });
+});
+</script>
+<script language="javascript" type="text/javascript">
+$(document).ready(function() {
+	var filterId = 1;
+	$("#add_filter").click(function() {
+		$("#stat_filters").append(
+	"<tr> \
+	  <td> \
+	    <select name=\"stat_" + filterId + "\"> \
+	      <option value=\"none\"><b><--Select Stat--></b></option> \
+		  <option value=\"none\"><b>==Basic Attributes==</b></option> \
+		  <option value=\"hp\">Hit Points</option> \
+		  <option value=\"mana\">Mana</option> \
+		  <option value=\"endur\">Endurance</option> \
+		  <option value=\"ac\">Armor Class</option> \
+		  <option value=\"none\"><b>==Base Stats==</b></option> \
+		  <option value=\"aagi\">Agility</option> \
+		  <option value=\"acha\">Charisma</option> \
+		  <option value=\"adex\">Dexterity</option> \
+		  <option value=\"aint\">Intelligence</option> \
+		  <option value=\"asta\">Stamina</option> \
+		  <option value=\"astr\">Strength</option> \
+		  <option value=\"awis\">Wisdom</option> \
+		  <option value=\"none\"><b>==Heroic Stats==</b></option> \
+		  <option value=\"heroic_agi\">Heroic Agility</option> \
+		  <option value=\"heroic_cha\">Heroic Charisma</option> \
+		  <option value=\"heroic_dex\">Heroic Dexterity</option> \
+		  <option value=\"heroic_int\">Heroic Intelligence</option> \
+		  <option value=\"heroic_sta\">Heroic Stamina</option> \
+		  <option value=\"heroic_str\">Heroic Strength</option> \
+		  <option value=\"heroic_wis\">Heroic Wisdom</option> \
+		  <option value=\"none\"><b>==Resists (Heroic Included)==</b></option> \
+		  <option value=\"cr\">Resist Cold</option> \
+		  <option value=\"dr\">Resist Disease</option> \
+		  <option value=\"fr\">Resist Fire</option> \
+		  <option value=\"mr\">Resist Magic</option> \
+		  <option value=\"pr\">Resist Poison</option> \
+		  <option value=\"none\"><b>==Mod 1s==</b></option> \
+		  <option value=\"attack\">Attack</option> \
+		  <option value=\"haste\">Haste</option> \
+		  <option value=\"regen\">HP Regeneration</option> \
+		  <option value=\"manaregen\">Mana Regeneration</option> \
+		  <option value=\"enduranceregen\">Endurance Regeneration</option> \
+		  <option value=\"healamt\">Healing Amount</option> \
+		  <option value=\"spelldmg\">Spell Damage</option> \
+		  <option value=\"none\"><b>==Mod 2s==</b></option> \
+		  <option value=\"accuracy\">Accuracy</option> \
+		  <option value=\"avoidance\">Avoidance</option> \
+		  <option value=\"combateffects\">Combat Effects</option> \
+		  <option value=\"damageshield\">Damage Shielding</option> \
+		  <option value=\"dotshielding\">DoT Shield</option> \
+		  <option value=\"shielding\">Shielding</option> \
+		  <option value=\"spellshield\">Spell Shield</option> \
+		  <option value=\"strikethrough\">Strikethrough</option> \
+		  <option value=\"stunresist\">Stun Resist</option> \
+		</select> \
+	  </td> \
+	  <td><input name=\"stat_val_" + filterId + "\" size=\"3\" value=\"0\"></td> \
+	  <td> \
+	    <input type=\"button\" class=\"removerow\" value=\"-\"> \
+	  </td> \
+	</tr>");
+		filterId++;
+		$(".removerow").on('click', function() {
+			$(this).parent().parent().remove();
+		});
+	});
+});
+</script>
+<center><h3>Create Item Restriction Set</h3></center>
+Only items with the provided stats will be searched for.  Heroic resists are included when resists are selected.  Delay is inverted (e.g. delay 20 will get delay 20 and lower.)<br><br>
+<form action="{{ url_for('create_restrict_set') }}" method="post" class="add-entry" id="demoForm">
+    <table id="stat_filters" class="smallerfont"></table><input type="button" value="Add Stat Filter" id="add_filter"><br><br>
+    NAME: <textarea rows="1" class="nameentry" name="set_name"></textarea><br><br>
+    <input type="submit" value="Submit">
+</form>
+
+{% endblock %}

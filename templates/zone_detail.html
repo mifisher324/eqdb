@@ -1,8 +1,23 @@
 {% extends "layout.html" %}
-{% block body %}
 {% if data is none %}
 <h3>Zone data not found or does not exist</h3>
 {% else %}
+{% block title %}
+EQDB :: Zone :: {{data.long_name}}
+{% endblock %}
+{% block body %}
+ <script>
+ $(document).ready(function() {
+	 $('#npc_table').DataTable({
+		 "order": [[1, "desc"]],
+		 "pageLength": 25,
+		 searching: true,
+		 paging: false,
+		 info: false,
+		 "dom": '<lfp<t>i>'
+	 });
+ });
+ </script>
 <center><h3>{{data.long_name}}</h3></center>
 <div style="display: flex; justify-content: center;">
 <div style="height:1px; margin-top:2em;" xmlns="http://www.w3.org/1999/html"></div>
@@ -145,6 +160,11 @@
             <a class="nav-link" id="items-tab" data-bs-toggle="tab" href="#items" role="tab" aria-controls="items" aria-selected="false">Items</a>
         </li>
         {% endif %}
+        {% if data.npcs %}
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="npcs-tab" data-bs-toggle="tab" href="#npcs" role="tab" aria-controls="npcs" aria-selected="false">NPCs</a>
+        </li>
+        {% endif %}
         {% if data.spawn_groups %}
         <li class="nav-item" role="presentation">
             <a class="nav-link" id="spawns-tab" data-bs-toggle="tab" href="#spawns" role="tab" aria-controls="spawns" aria-selected="false">Spawns</a>
@@ -155,7 +175,7 @@
         <div class="tab-pane fade p-3 border-end border-bottom border-start bg-body-tertiary show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
             <ul>
                 {% for entry in data.linked_zones %}
-                <li><a href="{{url_for('zone_detail', zone_id=entry)}}">{{data['linked_zones'][entry]}}</a></li>
+                <li><a href="{{url_for('zones.zone_detail', zone_id=entry)}}">{{data['linked_zones'][entry]}}</a></li>
                 {% endfor %}
             </ul>
         </div>
@@ -167,23 +187,23 @@
                  {% if rower.value == 0 %}
                   <tr>
                    <td><img src="/static/item_icons/item_{{entry.icon}}.png"></td>
-                   <td><a href="{{url_for('item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a></td>
+                   <td><a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a></td>
                  {% set rower.value = 1 %}
                  {% elif rower.value == 1 %}
                     <td><img src="/static/item_icons/item_{{entry.icon}}.png"></td>
-                    <td><a href="{{url_for('item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a></td>
+                    <td><a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a></td>
                   {% set rower.value = 2 %}
                       {% elif rower.value == 2 %}
                     <td><img src="/static/item_icons/item_{{entry.icon}}.png"></td>
-                    <td><a href="{{url_for('item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a></td>
+                    <td><a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a></td>
                   {% set rower.value = 3 %}
                       {% elif rower.value == 3 %}
                     <td><img src="/static/item_icons/item_{{entry.icon}}.png"></td>
-                    <td><a href="{{url_for('item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a></td>
+                    <td><a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a></td>
                   {% set rower.value = 4 %}
                   {% elif rower.value == 4 %}
                       <td><img src="/static/item_icons/item_{{entry.icon}}.png"></td>
-                     <td><a href="{{url_for('item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a></td>
+                     <td><a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a></td>
                   </tr>
                   {% set rower.value = 0 %}
                   {% endif%}
@@ -191,14 +211,34 @@
             </table>
         </div>
         {% endif %}
+        {% if data.npcs %}
+        <div class="tab-pane fade p-3 border-end border-bottom border-start bg-body-tertiary" id="npcs" role="tabpanel" aria-labelledby="npcs-tab">
+            <table class="mediumfont table table-bordered" id="npc_table">
+                <thead>
+                <th>Name</th>
+                <th>Level</th>
+                <th>HP</th>
+                <th>Race</th>
+                </thead>
+                {% for entry in data.npcs %}
+                <tr>
+                    <td><a href="{{url_for('npcs.npc_detail', npc_id=entry.id)}}">{{entry.name}}</a></td>
+                    <td>{{entry.level}}</td>
+                    <td>{{entry.hp}}</td>
+                    <td>{{entry.race}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            </div>
+        {% endif %}
         {% if data.spawn_groups %}
         <div class="tab-pane fade p-3 border-end border-bottom border-start bg-body-tertiary" id="spawns" role="tabpanel" aria-labelledby="spawns-tab">
             <ul>
                 {% for entry in data.spawn_groups %}
-                  <li>{{entry}} :: {{data.spawn_groups[entry].y}}, {{data.spawn_groups[entry].x}}, {{data.spawn_groups[entry].z}} :: Respawn: {{data.spawn_groups[entry].respawn}}s :: <abbr title="spawngroupID: {{data.spawn_groups[entry].group_id}}, spawn2ID: {{data.spawn_groups[entry].spawn_id}}">Spawn Info</abbr></li>
+                  <li>{{entry}} :: {{data.spawn_groups[entry].y}}, {{data.spawn_groups[entry].x}}, {{data.spawn_groups[entry].z}} :: Respawn: {{data.spawn_groups[entry].respawn}} :: <abbr title="spawngroupID: {{data.spawn_groups[entry].group_id}}, spawn2ID: {{data.spawn_groups[entry].spawn_id}}">Spawn Info</abbr></li>
                   <ul>
                       {% for sub_entry in data.spawn_groups[entry].npcs %}
-                      <li><a href="{{url_for('npc_detail', npc_id=sub_entry.npc_id)}}">{{sub_entry.npc_name}}</a> ({{sub_entry.chance}}% Chance)</li>
+                      <li><a href="{{url_for('npcs.npc_detail', npc_id=sub_entry.npc_id)}}">{{sub_entry.npc_name}}</a> ({{sub_entry.chance}}% Chance)</li>
                       {% endfor %}
                   </ul>
                 {% endfor %}
@@ -208,5 +248,5 @@
     </div>
 </div>
 </div>
-{% endif %}
 {% endblock %}
+{% endif %}

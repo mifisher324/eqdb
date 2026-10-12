@@ -18,9 +18,23 @@
     {% for entry in data[level]|sort(attribute="spell_name") %}
         <tr style="border: 1px solid black; border-collapse: collapse;">
             <td style="border: 1px solid black; border-collapse: collapse;"><img src="/static/spell_icons/{{entry.icon}}.png"></td>
-            <td style="border: 1px solid black; border-collapse: collapse;"><a href="{{url_for('spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.spell_name}}</a></td>
+            <td style="border: 1px solid black; border-collapse: collapse;"><a href="{{url_for('spells.spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.spell_name}}</a></td>
             <td style="border: 1px solid black; border-collapse: collapse;">{{entry.skill}}</td>
             <td style="border: 1px solid black; border-collapse: collapse;">{{entry.target}}</td>
+            <td style="border: 1px solid black; border-collapse: collapse;">
+            {% if entry.instant %}
+                Instant
+            {% else %}
+                {% if entry.beneficial %}
+                  Buff
+                {% elif entry.dot %}
+                  DoT
+                {% else %}
+                  Debuff
+                {% endif %}
+            {% endif %}
+            </td>
+
             <td style="border: 1px solid black; border-collapse: collapse;">
                 {% for sub_entry in entry['slots'] %}
                   {% if entry['slots'][sub_entry]['desc'] is not none %}

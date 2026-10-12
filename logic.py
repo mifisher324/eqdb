@@ -14,7 +14,7 @@ here = os.path.dirname(__file__)
 site_config = configparser.RawConfigParser()
 ini_path = os.path.join(here, 'configuration.ini')
 site_config.read_file(open(ini_path))
-expansion = site_config.getint('thj', 'expansion')
+expansion = site_config.getint('emu', 'expansion')
 
 driver = site_config.get('database', 'driver')
 user = site_config.get('database', 'user')
@@ -24,11 +24,7 @@ host = site_config.get('database', 'host')
 port = site_config.get('database', 'port')
 
 engine = create_engine(f'{driver}{user}:{password}@{host}:{port}/{database}')
-local_database = site_config.get('local_database', 'connection')
-local_engine = create_engine(local_database)
-
 Base = automap_base()
-LocalBase = automap_base()
 
 
 class ItemRedirection(Base):
@@ -37,7 +33,6 @@ class ItemRedirection(Base):
 
 
 Base.prepare(autoload_with=engine)
-LocalBase.prepare(autoload_with=local_engine)
 
 Zone = Base.classes.zone
 ZonePoints = Base.classes.zone_points
@@ -49,21 +44,16 @@ NPCTypes = Base.classes.npc_types
 NPCSpells = Base.classes.npc_spells
 NPCSpellsEntries = Base.classes.npc_spells_entries
 MerchantList = Base.classes.merchantlist
+LootTable = Base.classes.loottable
 LootTableEntries = Base.classes.loottable_entries
 LootDropEntries = Base.classes.lootdrop_entries
 LootDrop = Base.classes.lootdrop
-SpellsNewReference = Base.classes.spells_new_reference
 SpellsNew = Base.classes.spells_new
-FocusSpell = aliased(SpellsNewReference)
-FocusSpellNew = aliased(SpellsNew)
-ClickSpell = aliased(SpellsNewReference)
-ClickSpellNew = aliased(SpellsNew)
-ProcSpell = aliased(SpellsNewReference)
-ProcSpellNew = aliased(SpellsNew)
-WornSpell = aliased(SpellsNewReference)
-WornSpellNew = aliased(SpellsNew)
-BardSpell = aliased(SpellsNewReference)
-BardSpellNew = aliased(SpellsNew)
+FocusSpell = aliased(SpellsNew)
+ClickSpell = aliased(SpellsNew)
+ProcSpell = aliased(SpellsNew)
+WornSpell = aliased(SpellsNew)
+BardSpell = aliased(SpellsNew)
 Forage = Base.classes.forage
 GroundSpawns = Base.classes.ground_spawns
 TradeskillRecipe = Base.classes.tradeskill_recipe
@@ -73,17 +63,13 @@ FactionList = Base.classes.faction_list
 Pets = Base.classes.pets
 
 
-IdentifiedItems = LocalBase.classes.identified_items
-IDEntry = LocalBase.classes.id_entry
-Contributor = LocalBase.classes.contributor
-
 # Important that these goes here to stop circular import
 import spell
-import factions
-import zones
-import tradeskills
+import faction
+import zone
+import tradeskill
 import npc
-import items
+import item
 
 
 def _debugger():
@@ -110,7 +96,7 @@ def _get_arg_list(tooltip=False):
                 Item.banedmgraceamt, Item.elemdmgamt, Item.elemdmgtype, Item.clicklevel2, Item.proclevel2,
                 Item.backstabdmg, Item.bardeffect, Item.worneffect, Item.procrate, Item.lore, Item.bagtype,
                 Item.bagslots, Item.bagwr, Item.bagsize, Item.skillmodvalue, Item.skillmodmax, Item.skillmodtype,
-                Item.icon, Item.casttime, Item.maxcharges]
+                Item.icon, Item.casttime, Item.maxcharges, Item.augtype, Item.augrestrict, Item.color, Item.scrolleffect]
     if tooltip:
         arg_list.append(Item.classes)
         arg_list.append(Item.slots)
@@ -130,6 +116,7 @@ def _get_arg_list(tooltip=False):
         arg_list.append(ClickSpell.name.label('click_name'))
         arg_list.append(ProcSpell.id.label('proc_id'))
         arg_list.append(ProcSpell.name.label('proc_name'))
+        arg_list.append(ProcSpell.effect_base_value1.label('proc_max_damage'))
         arg_list.append(WornSpell.id.label('worn_id'))
         arg_list.append(WornSpell.name.label('worn_name'))
         arg_list.append(WornSpell.effect_base_value1.label('worn_value'))
@@ -156,122 +143,112 @@ def send_error_email(error, referrer):
 
 
 def all_search(name=None):
-    return {'tradeskill': tradeskills.get_tradeskills(name=name),
-            'game_items': items.get_fast_item(name),
+    return {'tradeskill': tradeskill.get_tradeskills(name=name),
+            'game_items': item.get_fast_item(name),
             'spells': spell.get_spells(name),
             'npcs': npc.get_npcs(name),
-            'zones': zones.get_zone(name),
-            'factions': factions.get_factions(name)}
+            'zones': zone.get_zone(name),
+            'factions': faction.get_factions(name)}
 
 
 def get_item_data(item_id, full=False):
     """Returns the basic data for an item, used for tooltips."""
+    excl_list = utils.get_exclusion_list('item')
+    if item_id in excl_list:
+        return None
 
     with Session(bind=engine) as session:
         # Get the item
         args = _get_arg_list(tooltip=True)
         query = session.query(*args).filter(Item.id == item_id)
         result = query.all()
-        if not result:
-            return None
-        ret_dict = dict(result[0]._mapping)
+    if not result:
+        return None
+    ret_dict = dict(result[0]._mapping)
 
-        proc = ret_dict['proceffect']
-        click = ret_dict['clickeffect']
-        focus = ret_dict['focuseffect']
-        worn = ret_dict['worneffect']
-        inst = ret_dict['bardeffect']
-        banebody = ret_dict['banedmgbody']
-        banerace = ret_dict['banedmgrace']
-        elemtype = ret_dict['elemdmgtype']
-        aug_slot_1 = ret_dict['augslot1type']
-        aug_slot_2 = ret_dict['augslot2type']
-        aug_slot_3 = ret_dict['augslot3type']
-        aug_slot_4 = ret_dict['augslot4type']
-        aug_slot_5 = ret_dict['augslot5type']
-        skill_mod = ret_dict['skillmodtype']
+    proc = ret_dict['proceffect']
+    click = ret_dict['clickeffect']
+    focus = ret_dict['focuseffect']
+    worn = ret_dict['worneffect']
+    inst = ret_dict['bardeffect']
+    banebody = ret_dict['banedmgbody']
+    banerace = ret_dict['banedmgrace']
+    elemtype = ret_dict['elemdmgtype']
+    aug_slot_1 = ret_dict['augslot1type']
+    aug_slot_2 = ret_dict['augslot2type']
+    aug_slot_3 = ret_dict['augslot3type']
+    aug_slot_4 = ret_dict['augslot4type']
+    aug_slot_5 = ret_dict['augslot5type']
+    skill_mod = ret_dict['skillmodtype']
+    scrolleffect = ret_dict['scrolleffect']
 
-        if worn > 0:
-            query = session.query(SpellsNewReference.name).filter(SpellsNewReference.id == worn)
-            result = query.all()
-            if not result:
-                query = session.query(SpellsNew.name).filter(SpellsNew.id == worn)
-                result = query.all()
-            ret_dict['worn_name'] = result[0][0]
-        if proc > 0:
-            query = session.query(SpellsNewReference.name).filter(SpellsNewReference.id == proc)
-            result = query.all()
-            if not result:
-                query = session.query(SpellsNew.name).filter(SpellsNew.id == proc)
-                result = query.all()
-            ret_dict['proc_name'] = result[0][0]
-        if click > 0:
-            query = session.query(SpellsNewReference.name).filter(SpellsNewReference.id == click)
-            result = query.all()
-            if not result:
-                query = session.query(SpellsNew.name).filter(SpellsNew.id == click)
-                result = query.all()
+    # An item can reference a spell id that is not in spells_new, e.g. when the spell
+    # file is trimmed after the item data is imported. Indexing an empty result raised
+    # IndexError and returned a 500 for the whole item page, so name it by id instead.
+    def spell_name(spell_id):
+        row = session.query(SpellsNew.name).filter(SpellsNew.id == spell_id).first()
+        return row[0] if row else 'Spell %s' % spell_id
 
-            if not result:
-                ret_dict['click_name'] = 'Unknown Spell'
-            else:
-                ret_dict['click_name'] = utils.check_sympathetic(result[0][0])
-        if focus > 0:
-            query = session.query(SpellsNewReference.name).filter(SpellsNewReference.id == focus)
-            result = query.all()
-            if not result:
-                query = session.query(SpellsNew.name).filter(SpellsNew.id == focus)
-                result = query.all()
-            if not result:
-                ret_dict['focus_name'] = 'Unknown Spell'
-            else:
-                ret_dict['focus_name'] = result[0][0]
-        if inst > 0:
-            query = session.query(SpellsNewReference.name).filter(SpellsNewReference.id == inst)
-            result = query.all()
-            if not result:
-                query = session.query(SpellsNew.name).filter(SpellsNew.id == inst)
-                result = query.all()
-            ret_dict['inst_name'] = result[0][0]
-        if banebody > 0:
-            ret_dict['bane_body_name'] = utils.get_bane_dmg_body(banebody)
-            ret_dict['bane_body_amount'] = ret_dict['banedmgamt']
-        if banerace > 0:
-            ret_dict['bane_race_name'] = utils.get_bane_dmg_race(banerace)
-            ret_dict['bane_race_amount'] = ret_dict['banedmgraceamt']
-        if elemtype > 0:
-            ret_dict['elem_dmg_name'] = utils.get_elem_dmg_type(elemtype)
-            ret_dict['elem_dmg_amount'] = ret_dict['elemdmgamt']
-        if aug_slot_1 > 0:
-            ret_dict['aug_slot_1'] = utils.get_aug_type(aug_slot_1)
-        if aug_slot_2 > 0:
-            ret_dict['aug_slot_2'] = utils.get_aug_type(aug_slot_2)
-        if aug_slot_3 > 0:
-            ret_dict['aug_slot_3'] = utils.get_aug_type(aug_slot_3)
-        if aug_slot_4 > 0:
-            ret_dict['aug_slot_4'] = utils.get_aug_type(aug_slot_4)
-        if aug_slot_5 > 0:
-            ret_dict['aug_slot_5'] = utils.get_aug_type(aug_slot_5)
-        if skill_mod > 0:
-            ret_dict['skillmodname'] = utils.parse_skill(int(skill_mod))
+    if worn > 0:
+        ret_dict['worn_name'] = spell_name(worn)
+    if proc > 0:
+        ret_dict['proc_name'] = spell_name(proc)
+    if click > 0:
+        ret_dict['click_name'] = utils.check_sympathetic(spell_name(click))
+    if focus > 0:
+        ret_dict['focus_name'] = spell_name(focus)
+    if inst > 0:
+        ret_dict['inst_name'] = spell_name(inst)
+    if banebody > 0:
+        ret_dict['bane_body_name'] = utils.get_bane_dmg_body(banebody)
+        ret_dict['bane_body_amount'] = ret_dict['banedmgamt']
+    if banerace > 0:
+        ret_dict['bane_race_name'] = utils.get_bane_dmg_race(banerace)
+        ret_dict['bane_race_amount'] = ret_dict['banedmgraceamt']
+    if elemtype > 0:
+        ret_dict['elem_dmg_name'] = utils.get_elem_dmg_type(elemtype)
+        ret_dict['elem_dmg_amount'] = ret_dict['elemdmgamt']
+    if aug_slot_1 > 0:
+        ret_dict['aug_slot_1'] = utils.get_aug_slot_type(aug_slot_1)
+    if aug_slot_2 > 0:
+        ret_dict['aug_slot_2'] = utils.get_aug_slot_type(aug_slot_2)
+    if aug_slot_3 > 0:
+        ret_dict['aug_slot_3'] = utils.get_aug_slot_type(aug_slot_3)
+    if aug_slot_4 > 0:
+        ret_dict['aug_slot_4'] = utils.get_aug_slot_type(aug_slot_4)
+    if aug_slot_5 > 0:
+        ret_dict['aug_slot_5'] = utils.get_aug_slot_type(aug_slot_5)
+    if skill_mod > 0:
+        ret_dict['skillmodname'] = utils.parse_skill(int(skill_mod))
+    if scrolleffect > 0:
+        query = session.query(SpellsNew.name).filter(SpellsNew.id == scrolleffect)
+        result = query.first()
+        ret_dict['scrolleffectname'] = result[0]
 
     ret_dict['class_str'] = utils.get_class_string(ret_dict['classes'])
     ret_dict['slot_str'] = utils.get_slot_string(ret_dict['slots'])
     ret_dict['type_str'] = utils.get_type_string(ret_dict['itemtype'])
-    ret_dict['thj_enabled'] = False
-    item_id = int(item_id)
-    if item_id < 1000000:
-        # See if Enchanted and Legendary exist
-        with Session(bind=engine) as session:
-            ench = item_id + 1000000
-            lego = item_id + 2000000
-            query = session.query(Item.id).filter(or_(Item.id == ench, Item.id == lego))
-            result = query.all()
-            if len(result) == 2:
-                ret_dict['thj_enabled'] = True
-    elif item_id > 1000000:
-        ret_dict['thj_enabled'] = True
+    if ret_dict['augtype'] > 0:
+        ret_dict['augtype'] = utils.get_aug_types(ret_dict['augtype'])
+        ret_dict['augrestrict'] = utils.get_aug_restrict(ret_dict['augrestrict'])
     if full:
+        ret_dict['red'] = (int(ret_dict['color']) & 0x00FF0000) >> 16
+        ret_dict['green'] = (int(ret_dict['color']) & 0x0000FF00) >> 8
+        ret_dict['blue'] = (int(ret_dict['color']) & 0x000000FF)
+
+        ret_dict['emu_enabled'] = False
+        item_id = int(item_id)
+        if item_id < 1000000:
+            # See if Enchanted and Legendary exist
+            with Session(bind=engine) as session:
+                ench = item_id + 1000000
+                lego = item_id + 2000000
+                query = session.query(Item.id).filter(or_(Item.id == ench, Item.id == lego))
+                result = query.all()
+                if len(result) == 2:
+                    ret_dict['emu_enabled'] = True
+        elif item_id > 1000000:
+            ret_dict['emu_enabled'] = True
         # Get mobs that drop this as loot
         droppers = []
         orig_item_id = item_id
@@ -282,7 +259,7 @@ def get_item_data(item_id, full=False):
         known_zones = {}
         skip_zones = []
         with Session(bind=engine) as session:
-            query = session.query(NPCTypes.id, NPCTypes.name).filter(LootDropEntries.item_id == item_id).\
+            query = session.query(NPCTypes.id, NPCTypes.name, LootDropEntries.chance).filter(LootDropEntries.item_id == item_id).\
                 filter(LootDropEntries.lootdrop_id == LootTableEntries.lootdrop_id).\
                 filter(LootTableEntries.loottable_id == NPCTypes.loottable_id)
             result = query.all()
@@ -316,14 +293,16 @@ def get_item_data(item_id, full=False):
                     continue
                 droppers.append({'npc_id': entry[0],
                                  'npc_name': utils.fix_npc_name(entry[1]),
-                                 'zone_name': zone_name})
+                                 'zone_name': zone_name,
+                                 'zone_id': zone_id,
+                                 'chance': entry[2]})
         ret_dict['droppers'] = droppers
 
         # Get vendors that sell this
         vendors = {}
         with Session(bind=engine) as session:
             query = session.query(NPCTypes.id, NPCTypes.name).filter(MerchantList.item == item_id).\
-                filter(MerchantList.merchantid == NPCTypes.id).\
+                filter(MerchantList.merchantid == NPCTypes.merchant_id).\
                 filter(MerchantList.min_expansion <= expansion)
             result = query.all()
         lookup = {}
@@ -334,6 +313,14 @@ def get_item_data(item_id, full=False):
             else:
                 query = session.query(Zone.long_name, Zone.expansion).filter(Zone.zoneidnumber == zone_id)
                 sub_result = query.first()
+                if not sub_result:
+                    query = session.query(Zone.long_name, Zone.expansion).\
+                        filter(SpawnEntry.npcID == entry[0]).\
+                        filter(SpawnEntry.spawngroupID == Spawn2.spawngroupID).\
+                        filter(Zone.short_name == Spawn2.zone)
+                    sub_result = query.first()
+                    if not sub_result:
+                        continue
                 if sub_result[1] > expansion:
                     continue
                 zone_name = sub_result[0]
@@ -420,7 +407,10 @@ def get_era_items(kwargs):
     zone_or_filters = []
     quest_item_ids = []
     special_item_ids = []
+    ts_item_ids = []
+    quest_items = []
     for era in kwargs['eras']:
+        print(f'Check era {era}')
         zone_id_list = utils.get_era_zones(era)
         for zone_id in zone_id_list:
             zone_or_filters.append(NPCTypes.id.like(f'{zone_id}___'))
@@ -438,13 +428,13 @@ def get_era_items(kwargs):
             if os.path.exists(os.path.join(here, f'item_files/LoY_ts.txt')):
                 with open(os.path.join(here, f'item_files/LoY_ts.txt'), 'r') as fh:
                     file_data = fh.read()
-                special_item_ids += file_data.split('\n')
+                ts_item_ids += file_data.split('\n')
 
         # Certain expansions have tradeskill items at the highest level, add those
         if os.path.exists(os.path.join(here, f'item_files/{era}_ts.txt')):
             with open(os.path.join(here, f'item_files/{era}_ts.txt'), 'r') as fh:
                 file_data = fh.read()
-            special_item_ids += file_data.split('\n')
+            ts_item_ids += file_data.split('\n')
 
         if os.path.exists(os.path.join(here, f'item_files/{era}_special.txt')):
             with open(os.path.join(here, f'item_files/{era}_special.txt'), 'r') as fh:
@@ -454,6 +444,7 @@ def get_era_items(kwargs):
     filters = []
     class_or_filters = []
     weapon_or_filters = []
+    symp_or_filters = []
     aug_search = False
     no_rent = False
     # Now, add the filters that can be applied at all levels to save time.
@@ -472,10 +463,13 @@ def get_era_items(kwargs):
     if 'g_slot' in kwargs:
         slot_value = utils.lookup_slot(kwargs['g_slot'])
         filters.append(Item.slots.op('&')(slot_value) == slot_value)
+    if 'skillmodtype' in kwargs:
+        if kwargs['skillmodtype'] == 'All':
+            filters.append(Item.skillmodtype >= 0)
+        else:
+            filters.append(Item.skillmodtype == kwargs['skillmodtype'])
     if 'i_type' in kwargs:
-        if kwargs['i_type'] == 'Any':
-            pass
-        elif kwargs['i_type'] == 'Augment':
+        if kwargs['i_type'] == 'Augment':
             aug_search = True
         elif kwargs['i_type'] == 'Any 1H Weapon':
             weapon_or_filters.append(Item.itemtype == utils.lookup_weapon_types('One Hand Slash'))
@@ -514,6 +508,7 @@ def get_era_items(kwargs):
     params = and_(*filters)
     class_or_params = or_(*class_or_filters)
     weapon_or_params = or_(*weapon_or_filters)
+    symp_or_params = or_(*symp_or_filters)
 
     base_items = []
     with Session(bind=engine) as session:
@@ -523,6 +518,7 @@ def get_era_items(kwargs):
             filter(params).\
             filter(class_or_params).\
             filter(weapon_or_params).\
+            filter(symp_or_params).\
             group_by(Item.id)
         result = query.all()
 
@@ -531,45 +527,63 @@ def get_era_items(kwargs):
         new_item['id'] = new_item['id'] + 2000000
         base_items.append(new_item)
 
-    quest_items = []
-    item_id_filters = []
-    for entry in quest_item_ids:
-        item_id_filters.append(Item.id == entry)
-    item_id_params = or_(*item_id_filters)
-    with Session(bind=engine) as session:
-        query = session.query(Item.id).\
-            filter(item_id_params).\
-            filter(params).\
-            filter(class_or_params).\
-            filter(weapon_or_params).\
-            group_by(Item.id)
-        result = query.all()
-    for entry in result:
-        quest_items.append({'id': entry[0], 'npc_id': -1, 'npc_name': 'Quested'})
+    if quest_item_ids:
+        item_id_filters = []
+        for entry in quest_item_ids:
+            item_id_filters.append(Item.id == entry)
+        item_id_params = or_(*item_id_filters)
+        with Session(bind=engine) as session:
+            query = session.query(Item.id).\
+                filter(item_id_params).\
+                filter(params).\
+                filter(class_or_params).\
+                filter(weapon_or_params).\
+                group_by(Item.id)
+            result = query.all()
+        for entry in result:
+            quest_items.append({'id': entry[0], 'npc_id': -1, 'npc_name': 'Quested'})
 
     special_items = []
-    item_id_filters = []
-    for entry in special_item_ids:
-        item_id_filters.append(Item.id == entry)
-    item_id_params = or_(*item_id_filters)
-    with Session(bind=engine) as session:
-        query = session.query(Item.id).\
-            filter(item_id_params).\
-            filter(params).\
-            filter(class_or_params).\
-            filter(weapon_or_params).\
-            group_by(Item.id)
-        result = query.all()
-    for entry in result:
-        special_items.append({'id': entry[0], 'npc_id': -2, 'npc_name': 'Tradeskills'})
-    return base_items, special_items, quest_items
+    if special_item_ids:
+        item_id_filters = []
+        for entry in special_item_ids:
+            item_id_filters.append(Item.id == entry)
+        item_id_params = or_(*item_id_filters)
+        with Session(bind=engine) as session:
+            query = session.query(Item.id).\
+                filter(item_id_params).\
+                filter(params).\
+                filter(class_or_params).\
+                filter(weapon_or_params).\
+                group_by(Item.id)
+            result = query.all()
+        for entry in result:
+            special_items.append({'id': entry[0], 'npc_id': -3, 'npc_name': 'Special Drop'})
+
+    ts_items = []
+    if ts_item_ids:
+        item_id_filters = []
+        for entry in ts_item_ids:
+            item_id_filters.append(Item.id == entry)
+        item_id_params = or_(*item_id_filters)
+        with Session(bind=engine) as session:
+            query = session.query(Item.id).\
+                filter(item_id_params).\
+                filter(params).\
+                filter(class_or_params).\
+                filter(weapon_or_params).\
+                group_by(Item.id)
+            result = query.all()
+        for entry in result:
+            ts_items.append({'id': entry[0], 'npc_id': -2, 'npc_name': 'Tradeskills'})
+    return base_items, special_items, quest_items, ts_items
 
 
-def create_lookup_table(base_items, tradeskill_items, quest_items):
+def create_lookup_table(base_items, tradeskill_items, quest_items, special_items):
     """Returns item id filters and an associated lookup table."""
     lookup = {}
     item_ids = []
-    for entry in base_items + tradeskill_items + quest_items:
+    for entry in base_items + tradeskill_items + quest_items + special_items:
         item_ids.append(Item.id == entry['id'])
         lookup.update({entry['id']: {'npc_id': entry['npc_id'], 'npc_name': entry['npc_name']}})
     return item_ids, lookup
@@ -578,21 +592,42 @@ def create_lookup_table(base_items, tradeskill_items, quest_items):
 def get_items_with_filters(weights, ignore_zero, **kwargs):
     """Returns all items with filters provided"""
     # Get the base items, tradeskill items, and quest items that drop from the zones in the eras requested.
-    base_items, tradeskill_items, quest_items = get_era_items(kwargs)
+    base_items, special_items, quest_items, tradeskill_items = get_era_items(kwargs)
+    if not base_items and not tradeskill_items and not quest_items and not special_items:
+        return [], False, False, False
 
     # Create the lookup table
-    item_ids, lookup_table = create_lookup_table(base_items, tradeskill_items, quest_items)
+    item_ids, lookup_table = create_lookup_table(base_items, tradeskill_items, quest_items, special_items)
 
     # Set up basic database filters
     filters = []
     focus_or_filters = []
 
     skip_filters = ['item_name', 'g_class_1', 'g_class_2', 'g_class_3', 'g_slot', 'i_type', 'no_rent', 'sub_type',
-                    'sympathetic', 'eras', 'w_eff', 'pet_search']
+                    'sympathetic', 'eras', 'w_eff', 'pet_search', 'skillmodtype']
     bane_body = False
     for entry in kwargs:
         if entry in skip_filters:
             continue
+        elif entry == 'proc_type':
+            filters.append(Item.proceffect == SpellsNew.id)
+            if kwargs['proc_type'] == 'Lifetap':
+                filters.append(SpellsNew.targettype == 13)
+            elif kwargs['proc_type'] == 'All':
+                filters.append(SpellsNew.effectid1 == 0)
+                filters.append(SpellsNew.effect_base_value1 < 0)
+            elif kwargs['proc_type'] == 'Debuff':
+                filters.append(SpellsNew.buffduration > 0)
+                filters.append(SpellsNew.effectid1 == 0)
+            elif kwargs['proc_type'] == 'Rune':
+                filters.append(SpellsNew.effectid1 == 55)
+            elif kwargs['proc_type'] == 'Healing':
+                filters.append(SpellsNew.effectid1 == 0)
+                filters.append(SpellsNew.effect_base_value1 > 0)
+            else:
+                filters.append(SpellsNew.resisttype == kwargs['proc_type'])
+                filters.append(SpellsNew.effectid1 == 0)
+                filters.append(SpellsNew.effect_base_value1 < 0)
         elif entry == 'proc':
             filters.append(Item.proceffect >= 1)
         elif 'proclevel2' in entry:
@@ -610,7 +645,7 @@ def get_items_with_filters(weights, ignore_zero, **kwargs):
             bane_body = False
             filters.append(Item.banedmgrace == kwargs['banedmgrace'])
         elif 'focus_type' in entry:
-            ids = utils.get_focus_values(kwargs['focus_type'], kwargs['sub_type'], engine, SpellsNewReference)
+            ids = utils.get_focus_values(kwargs['focus_type'], kwargs['sub_type'], engine, SpellsNew)
             for focus_id in ids:
                 focus_or_filters.append(Item.focuseffect == focus_id)
             if kwargs['focus_type'] == 'Melee':
@@ -655,6 +690,9 @@ def get_items_with_filters(weights, ignore_zero, **kwargs):
     show_inst = False
     show_focus = False
     for entry in all_items:
+        excl_list = utils.get_exclusion_list('item')
+        if entry.id in excl_list:
+            continue
         entry = utils.ReducedItem((dict(entry._mapping)))
         entry.npc_id = lookup_table[entry.id]['npc_id']
         entry.npc_name = lookup_table[entry.id]['npc_name']
@@ -687,6 +725,7 @@ def get_items_with_filters(weights, ignore_zero, **kwargs):
         entry.w_eff = w_eff
         entry.zone_name = utils.lookup_zone_name(entry.npc_id)
         entry.npc_name = utils.fix_npc_name(entry.npc_name)
+        
         out_items.append(entry)
 
     out_items.sort(key=operator.attrgetter('weight'), reverse=True)

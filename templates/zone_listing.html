@@ -9,16 +9,16 @@
     {% for sub_entry in data[entry]|sort %}
         {% if rower.value == 0 %}
         <tr>
-            <td><a href="{{url_for('zone_detail', zone_id=data[entry][sub_entry]['id'])}}">{{sub_entry}}</a><br>({{data[entry][sub_entry]['short_name']}})<br>ZEM: {{data[entry][sub_entry]['zem']}}</td>
+            <td><a href="{{url_for('zones.zone_detail', zone_id=data[entry][sub_entry]['id'])}}">{{sub_entry}}</a><br>({{data[entry][sub_entry]['short_name']}})<br>ZEM: {{data[entry][sub_entry]['zem']}}</td>
             {% set rower.value = 1 %}
         {% elif rower.value == 1 %}
-            <td><a href="{{url_for('zone_detail', zone_id=data[entry][sub_entry]['id'])}}">{{sub_entry}}</a><br>({{data[entry][sub_entry]['short_name']}})<br>ZEM: {{data[entry][sub_entry]['zem']}}</td>
+            <td><a href="{{url_for('zones.zone_detail', zone_id=data[entry][sub_entry]['id'])}}">{{sub_entry}}</a><br>({{data[entry][sub_entry]['short_name']}})<br>ZEM: {{data[entry][sub_entry]['zem']}}</td>
             {% set rower.value = 2 %}
         {% elif rower.value == 2 %}
-            <td><a href="{{url_for('zone_detail', zone_id=data[entry][sub_entry]['id'])}}">{{sub_entry}}</a><br>({{data[entry][sub_entry]['short_name']}})<br>ZEM: {{data[entry][sub_entry]['zem']}}</td>
+            <td><a href="{{url_for('zones.zone_detail', zone_id=data[entry][sub_entry]['id'])}}">{{sub_entry}}</a><br>({{data[entry][sub_entry]['short_name']}})<br>ZEM: {{data[entry][sub_entry]['zem']}}</td>
             {% set rower.value = 3 %}
         {% elif rower.value == 3 %}
-           <td><a href="{{url_for('zone_detail', zone_id=data[entry][sub_entry]['id'])}}">{{sub_entry}}</a><br>({{data[entry][sub_entry]['short_name']}})<br>ZEM: {{data[entry][sub_entry]['zem']}}</td>
+           <td><a href="{{url_for('zones.zone_detail', zone_id=data[entry][sub_entry]['id'])}}">{{sub_entry}}</a><br>({{data[entry][sub_entry]['short_name']}})<br>ZEM: {{data[entry][sub_entry]['zem']}}</td>
         </tr>
         {% set rower.value = 0 %}
         {% endif %}

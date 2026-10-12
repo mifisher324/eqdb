@@ -24,7 +24,7 @@ $(document).ready(function() {
     });
 });
 </script>
-<form actions="{{ url_for('faction_search') }}" method="post" class="add-entry" id="demoForm">
+<form actions="{{ url_for('factions.faction_search') }}" method="post" class="add-entry" id="demoForm">
     Faction Name (partial allowed): <textarea rows="1" class="nameentry" name="faction_name"></textarea><br><br>
 <input type="submit" value="Search">
 </form>

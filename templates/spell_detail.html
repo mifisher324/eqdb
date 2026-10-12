@@ -1,8 +1,11 @@
 {% extends "layout.html" %}
-{% block body %}
 {% if data is none %}
 <h2>Spell Data for this Spell ID not found</h2>
 {% else %}
+{% block title %}
+EQDB :: Spell :: {{data.name}}
+{% endblock %}
+{% block body %}
 <center><h2>{{data.name}}</h2></center>
 <br>
 <div style="display: flex; justify-content: center;">
@@ -21,18 +24,31 @@
 </table>
     <br><br>
     {% if data.recourse_slots %}
-    <h5>Recourse: <a href="{{url_for('spell_detail', spell_id=data.recourse_base.id)}}">{{data.recourse_base.name}}</a></h5>
+    <h5>Recourse: <a href="{{url_for('spells.spell_detail', spell_id=data.recourse_base.id)}}">{{data.recourse_base.name}}</a>
+    </h5>
     <table>
-    {% for entry in data.recourse_slots.keys() %}
-    {% if data.recourse_slots[entry]['desc'] is not none %}
-    <tr>
-        <td>
-            <abbr title="spa={{data.recourse_slots[entry]['spa']}}, base_value={{data.recourse_slots[entry]['base_value']}}, max={{data.recourse_slots[entry]['max']}}, limit_value={{data.recourse_slots[entry]['limit_value']}}, formula={{data.recourse_slots[entry]['formula']}}">{{entry.replace('_', '')}}</abbr></td>
-        <td>{{data.recourse_slots[entry]['desc']|safe}}</td>
-    </tr>
+        {% for entry in data.recourse_slots.keys() %}
+        {% if data.recourse_slots[entry]['desc'] is not none %}
+        <tr>
+            <td>
+                <abbr title="spa={{data.recourse_slots[entry]['spa']}}, base_value={{data.recourse_slots[entry]['base_value']}}, max={{data.recourse_slots[entry]['max']}}, limit_value={{data.recourse_slots[entry]['limit_value']}}, formula={{data.recourse_slots[entry]['formula']}}">{{entry.replace('_',
+                    '')}}</abbr></td>
+            <td>{{data.recourse_slots[entry]['desc']|safe}}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
     {% endif %}
-    {% endfor %}
-        </table>
+    <br>
+    {% if data.components %}
+    <h5>Components</h5>
+    <ul>
+        {% for entry in data.components %}
+        <li><a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}"
+               class="tooltip-link">{{entry.name}}</a> x {{entry.count}}
+        </li>
+        {% endfor %}
+    </ul>
     {% endif %}
 </div>
 <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-left: 25px;" id="spell_extra">
@@ -75,14 +91,20 @@
                 <li>{{entry}}</li>
                 {% endfor %}
                 {% endif %}
-                <br><a href="{{url_for('spell_raw', spell_id=data.id)}}">Raw Data</a>
+                {% if data.scroll %}
+                    <br>
+                    {% for entry in data.scroll %}
+                        Taught By: <img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a><br>
+                    {% endfor %}
+                {% endif %}
+                <br><a href="{{url_for('spells.spell_raw', spell_id=data.id)}}">Raw Data</a>
             </ul>
         </div>
         {% if data.clicks %}
         <div class="tab-pane fade p-3 border-end border-bottom border-start bg-body-tertiary" id="click" role="tabpanel" aria-labelledby="click-tab">
             <ul>
                 {% for entry in data.clicks %}
-                <img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a><<br>
+                <img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a><br>
 
                 {% endfor %}
             </ul>
@@ -92,7 +114,7 @@
             <div class="tab-pane fade p-3 border-end border-bottom border-start bg-body-tertiary" id="proc" role="tabpanel" aria-labelledby="proc-tab">
             <ul>
                 {% for entry in data.procs %}
-                <img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a><br>
+                <img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a><br>
                 {% endfor %}
             </ul>
         </div>
@@ -101,7 +123,7 @@
         <div class="tab-pane fade p-3 border-end border-bottom border-start bg-body-tertiary" id="focus" role="tabpanel" aria-labelledby="focus-tab">
             <ul>
                 {% for entry in data.focus %}
-                <img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a><br>
+                <img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a><br>
                 {% endfor %}
             </ul>
         </div>
@@ -110,7 +132,7 @@
         <div class="tab-pane fade p-3 border-end border-bottom border-start bg-body-tertiary" id="worn" role="tabpanel" aria-labelledby="worn-tab">
                 <ul>
                 {% for entry in data.worn %}
-                <img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a><br>
+                <img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a><br>
                 {% endfor %}
                 </ul>
         </div>
@@ -119,8 +141,15 @@
         <div class="tab-pane fade p-3 border-end border-bottom border-start bg-body-tertiary" id="bard" role="tabpanel" aria-labelledby="bard-tab">
             <dl>
                 {% for entry in data.bard %}
-                <img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a><br>
+                <img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a><br>
                 {% endfor %}
+            </dl>
+        </div>
+        {% endif %}
+        {% if data.scroll %}
+        <div class="tab-pane fade p-3 border-end border-bottom border-start bg-body-tertiary" id="scroll" role="tabpanel" aria-labelledby="bard-tab">
+            <dl>
+
             </dl>
         </div>
         {% endif %}
@@ -176,5 +205,5 @@
 </table>
 </div>
 </div>
-{% endif %}
 {% endblock %}
+{% endif %}

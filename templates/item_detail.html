@@ -1,15 +1,27 @@
 {% extends "layout.html" %}
-{% block body %}
+ <script>
+ $(document).ready(function() {
+	 $('#npc_table').DataTable({
+		 "order": [[2, "desc"]],
+		 "pageLength": 25,
+		 searching: false,
+		 paging: false,
+		 info: false,
+		 "dom": '<lfp<t>i>'
+	 });
+ });
+ </script>
 {% if item is none %}
 <h3>Item data not found or item does not exist</h3>
 {% else %}
-<div style="display: flex; justify-content: center;">
-    <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="width=750px;" id="itemstats">
-        <style>
+{% block title %}
+EQDB :: Item :: {{item.Name}}
+{% endblock %}
+{% block body %}
+<style>
     .item-card {
         border: 1px solid transparent;
         border-collapse: collapse;
-        width: 716px;
     }
 
     .item-card td, item-card th {
@@ -31,8 +43,9 @@
     table {
         border-collapse: collapse;
     }
-
-        </style>
+</style>
+<div style="display: flex; justify-content: center;">
+    <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="width=750px;" id="itemstats">
         <table class='item-card'>
             <tbody>
             <tr>
@@ -463,7 +476,7 @@
             {% endif %}
             {% if item.worneffect > 0 %}
             <tr>
-                <td nowrap="1" colspan="3"><b>Worn:</b> <a href="{{url_for('spell_detail', spell_id=item.worneffect)}}"
+                <td nowrap="1" colspan="3"><b>Worn:</b> <a href="{{url_for('spells.spell_detail', spell_id=item.worneffect)}}"
                                                            data-url="{{item.worneffect}}" class="spell-tooltip-link">{{item.worn_name}}</a>
                 </td>
             </tr>
@@ -471,7 +484,7 @@
             {% if item.proceffect > 0 %}
             <tr>
                 <td nowrap="1" colspan='3'><b>Effect:</b> <a
-                        href="{{url_for('spell_detail', spell_id=item.proceffect)}}" data-url="{{item.proceffect}}"
+                        href="{{url_for('spells.spell_detail', spell_id=item.proceffect)}}" data-url="{{item.proceffect}}"
                         class="spell-tooltip-link">{{item.proc_name}}</a> (Combat)
                 </td>
             </tr>
@@ -484,7 +497,7 @@
             {% if item.clickeffect > 0 %}
             <tr>
                 <td nowrap="1" colspan='3'><b>Effect:</b> <a
-                        href="{{url_for('spell_detail', spell_id=item.clickeffect)}}" data-url="{{item.clickeffect}}"
+                        href="{{url_for('spells.spell_detail', spell_id=item.clickeffect)}}" data-url="{{item.clickeffect}}"
                         class="spell-tooltip-link">{{item.click_name}}</a>
                     {% if item.casttime == 0 %}
                     (Casting Time: Instant)
@@ -507,7 +520,7 @@
             {% if item.focuseffect > 0 %}
             <tr>
                 <td nowrap="1" colspan='3'><b>Effect:</b> <a
-                        href="{{url_for('spell_detail', spell_id=item.focuseffect)}}" data-url="{{item.focuseffect}}"
+                        href="{{url_for('spells.spell_detail', spell_id=item.focuseffect)}}" data-url="{{item.focuseffect}}"
                         class="spell-tooltip-link">{{item.focus_name}}</a> (Worn)
                 </td>
             </tr>
@@ -515,9 +528,17 @@
             {% if item.bardeffect > 0 %}
             <tr>
                 <td nowrap="1" colspan='3'><b>Effect:</b> <a
-                        href="{{url_for('spell_detail', spell_id=item.bardeffect)}}" data-url="{{item.bardeffect}}"
+                        href="{{url_for('spells.spell_detail', spell_id=item.bardeffect)}}" data-url="{{item.bardeffect}}"
                         class="spell-tooltip-link">{{item.inst_name}}</a> (Worn)
                 </td>
+            </tr>
+            {% endif %}
+            {% if item.augtype %}
+            <tr>
+                <td nowrap="1" colspan="3"><b>Aug Slot Types:</b> {{item.augtype}}</td>
+            </tr>
+            <tr>
+                <td nowrap="1" colspan="3"><b>Restrictions:</b> {{item.augrestrict}}</td>
             </tr>
             {% endif %}
             {% if "bane_body_name" in item %}
@@ -535,6 +556,12 @@
                 <td nowrap="1" colspan='3'><b>Proc Rate:</b> {{item.procrate}}</td>
             </tr>
             {% endif %}
+            {% if item.scrolleffect > 0 %}
+            <tr>
+                <td nowrap="1" colspan="3"><b>Teaches:</b> <a href="{{url_for('spells.spell_detail', spell_id=item.scrolleffect)}}" data-url="{{item.scrolleffect}}"
+                        class="spell-tooltip-link">{{item.scrolleffectname}}</a></td>
+            </tr>
+            {% endif %}
             <tr>
                 <td nowrap="1" colspan='3'><b>Item Lore:</b> {{item.lore}}</td>
             </tr>
@@ -542,6 +569,53 @@
         </table>
     </div>
 </div>
+<!-- NOTE: THIS FEATURE IS CURRENTLY DARK AS IT IS BEING CONSIDERED ON WHETHER IT IS APPROPRIATE FOR EQDB OR NOT -->
+<!--
+{% if gear %}
+<h4>Add item to gear list</h4>
+<form action="{{ url_for('update_gear_list', item_id=item.id) }}" method="post" class="add-entry" id="demoForm">
+    <select name="glid">
+        <option value="None" selected="selected">--Select Gear List--</option>
+        {% for entry in gear %}
+          <option value="{{gear[entry]}}">{{entry}}</option>
+        {% endfor %}
+    </select><br>
+    <select name="slot">
+        <option value="None" selected="selected">--Select Slot--</option>
+        <option value="Arms">Arms</option>
+        <option value="Back">Back</option>
+        <option value="Charm">Charm</option>
+        <option value="Chest">Chest</option>
+        <option value="Ear 1">Ear 1</option>
+        <option value="Ear 2">Ear 2</option>
+        <option value="Face">Face</option>
+        <option value="Feet">Feet</option>
+        <option value="Finger 1">Finger 1</option>
+        <option value="Finger 2">Finger 2</option>
+        <option value="Hands">Hands</option>
+        <option value="Head">Head</option>
+        <option value="Legs">Legs</option>
+        <option value="Neck">Neck</option>
+        <option value="Primary">Primary</option>
+        <option value="Range">Range</option>
+        <option value="Ammo">Ammo</option>
+        <option value="Secondary">Secondary</option>
+        <option value="Shoulder">Shoulder</option>
+        <option value="Waist">Waist</option>
+        <option value="Wrist 1">Wrist 1</option>
+        <option value="Wrist 2">Wrist 2</option>
+    </select>
+    <select name="augslot">
+        <option value="None" selected="selected">--N/A--</option>
+        <option value="slot 1">Slot 1</option>
+        <option value="slot 2">Slot 2</option>
+        <option value="slot 3">Slot 3</option>
+        <option value="slot 4">Slot 4</option>
+    </select>
+    <input type="submit" value="Submit">
+</form>
+{% endif %}
+-->
 <div style="display: flex; justify-content: center;">
     <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="width: 750px;" id="item_links">
         <ul class="nav nav-tabs" id="myTabs" role="tablist">
@@ -589,30 +663,39 @@
         <div class="tab-content" id="myTabsContent">
             <div class="tab-pane fade p-3 border-end border-bottom border-start bg-body-tertiary show active" id="basic"
                  role="tabpanel" aria-labelledby="basic-tab">
-                {% if item.thj_enabled %}
+                <b>Item Tint:</b> <div class="box" style="background-color:rgb({{item.red}}, {{item.green}}, {{item.blue}});"></div>
+                {% if item.emu_enabled %}
                 {% if item.id < 1000000 %}
-                <a href="{{url_for('item_detail', item_id=item.id+1000000)}}">Enchanted Version</a><br>
-                <a href="{{url_for('item_detail', item_id=item.id+2000000)}}">Legendary Version</a><br>
+                <a href="{{url_for('items.item_detail', item_id=item.id+1000000)}}" data-url="{{item.id+1000000}}" class="tooltip-link">Enchanted Version</a><br>
+                <a href="{{url_for('items.item_detail', item_id=item.id+2000000)}}" data-url="{{item.id+2000000}}" class="tooltip-link">Legendary Version</a><br>
                 {% elif 1000000 < item.id < 2000000 %}
-                <a href="{{url_for('item_detail', item_id=item.id-1000000)}}">Base Version</a><br>
-                <a href="{{url_for('item_detail', item_id=item.id+1000000)}}">Legendary Version</a><br>
+                <a href="{{url_for('items.item_detail', item_id=item.id-1000000)}}" data-url="{{item.id-1000000}}" class="tooltip-link">Base Version</a><br>
+                <a href="{{url_for('items.item_detail', item_id=item.id+1000000)}}" data-url="{{item.id+1000000}}" class="tooltip-link">Legendary Version</a><br>
                 {% else %}
-                <a href="{{url_for('item_detail', item_id=item.id-2000000)}}">Base Version</a><br>
-                <a href="{{url_for('item_detail', item_id=item.id-1000000)}}">Enchanted Version</a><br>
+                <a href="{{url_for('items.item_detail', item_id=item.id-2000000)}}" data-url="{{item.id-2000000}}" class="tooltip-link">Base Version</a><br>
+                <a href="{{url_for('items.item_detail', item_id=item.id-1000000)}}" data-url="{{item.id-1000000}}" class="tooltip-link">Enchanted Version</a><br>
                 {% endif %}
                 {% endif %}
-                <a href="{{url_for('item_raw', item_id=item.id)}}">Raw Item Data</a>
+                <br><br>
+                <a href="{{url_for('items.item_raw', item_id=item.id)}}">Raw Item Data</a>
             </div>
             {% if item.droppers %}
             <div class="tab-pane fade p-3 border-end border-bottom border-start bg-body-tertiary" id="dropper"
                  role="tabpanel" aria-labelledby="dropper-tab">
-                <ul>
+                <table class="mediumfont table table-bordered" id="npc_table">
+                    <thead>
+                    <th>NPC</th>
+                    <th>Zone</th>
+                    <th>% Chance</th>
+                    </thead>
                     {% for entry in item.droppers %}
-                    <li><a href="{{url_for('npc_detail', npc_id=entry.npc_id)}}">{{entry.npc_name}}</a> ::
-                        {{entry.zone_name}}
-                    </li>
+                    <tr>
+                        <td><a href="{{url_for('npcs.npc_detail', npc_id=entry.npc_id)}}">{{entry.npc_name}}</a></td>
+                        <td><a href="{{url_for('zones.zone_detail', zone_id=entry.zone_id)}}">{{entry.zone_name}}</a></td>
+                        <td>{{entry.chance}}%</td>
+                    </tr>
                     {% endfor %}
-                </ul>
+                </table>
             </div>
             {% endif %}
             {% if item.vendors %}
@@ -625,7 +708,7 @@
                     <ul>
                         {% for entry in item.vendors[zone] %}
 
-                        <li><a href="{{url_for('npc_detail', npc_id=entry.npc_id)}}">{{entry.npc_name}}</a></li>
+                        <li><a href="{{url_for('npcs.npc_detail', npc_id=entry.npc_id)}}">{{entry.npc_name}}</a></li>
 
                         {% endfor %}
                     </ul>
@@ -639,7 +722,7 @@
                  role="tabpanel" aria-labelledby="foraged-tab">
                 <ul>
                     {% for entry in item.foraged %}
-                    <li><a href="{{url_for('zone_detail', zone_id=entry.zone_id)}}">{{entry.zone_name}}</a>
+                    <li><a href="{{url_for('zones.zone_detail', zone_id=entry.zone_id)}}">{{entry.zone_name}}</a>
                         ({{entry.chance}}% Chance)
                     </li>
                     {% endfor %}
@@ -651,7 +734,7 @@
                  role="tabpanel" aria-labelledby="ground-tab">
                 <ul>
                     {% for entry in item.ground %}
-                    <li><a href="{{url_for('zone_detail', zone_id=entry.zone_id)}}">{{entry.zone_name}}</a>
+                    <li><a href="{{url_for('zones.zone_detail', zone_id=entry.zone_id)}}">{{entry.zone_name}}</a>
                         ({{entry.y}}, {{entry.x}})
                     </li>
                     {% endfor %}
@@ -664,7 +747,7 @@
                 Item is created by:<br>
                 <ul>
                     {% for entry in item.ts_result %}
-                    <li><a href="{{url_for('tradeskill_detail', ts_id=entry.ts_id)}}">{{entry.ts_name}}</a></li>
+                    <li><a href="{{url_for('tradeskills.tradeskill_detail', ts_id=entry.ts_id)}}">{{entry.ts_name}}</a></li>
                     {% endfor %}
                 </ul>
             </div>
@@ -675,7 +758,7 @@
                 Item is a component in:<br>
                 <ul>
                     {% for entry in item.ts_component %}
-                    <li><a href="{{url_for('tradeskill_detail', ts_id=entry.ts_id)}}">{{entry.ts_name}}</a></li>
+                    <li><a href="{{url_for('tradeskills.tradeskill_detail', ts_id=entry.ts_id)}}">{{entry.ts_name}}</a></li>
                     {% endfor %}
                 </ul>
             </div>
@@ -683,5 +766,5 @@
         </div>
     </div>
 </div>
-{% endif %}
 {% endblock %}
+{% endif %}

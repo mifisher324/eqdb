@@ -4,6 +4,8 @@ import os
 from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 
+from logic import expansion
+
 here = os.path.dirname(__file__)
 
 
@@ -11,6 +13,54 @@ class ReducedItem:
     def __init__(self, dictionary):
         for k, v in dictionary.items():
             setattr(self, k, v)
+
+
+def convert_time(seconds):
+    # Translate this into human readible
+    hours = 0
+    minutes = 0
+    days = 0
+    if seconds > 86400:
+        days = int(seconds / 86400)
+        seconds = seconds - (days * 86400)
+    if seconds > 3600:
+        hours = int(seconds / 3600)
+        seconds = seconds - (hours * 3600)
+
+    if seconds > 60:
+        minutes = int(seconds / 60)
+        seconds = seconds - (minutes * 60)
+
+    if days > 0 and hours > 0 and minutes > 0 and seconds > 0:
+        return f'{days} days, {hours} hours, {minutes} minutes, {seconds} seconds'
+    elif days > 0 and hours > 0 and minutes > 0:
+        return f'{days} days, {hours} hours, {minutes} minutes'
+    elif days > 0 and hours > 0 and seconds > 0:
+        return f'{days} days, {hours} hours, {seconds} seconds'
+    elif days > 0 and minutes > 0 and seconds > 0:
+        return f'{days} days, {minutes} minutes, {seconds} seconds'
+    elif days > 0 and hours > 0:
+        return f'{days} days, {hours} hours'
+    elif days > 0 and minutes > 0:
+        return f'{days} days, {minutes} minutes'
+    elif days > 0 and seconds > 0:
+        return f'{days} days, {seconds} seconds'
+    elif days > 0:
+        return f'{days} days'
+    elif hours > 0 and minutes > 0 and seconds > 0:
+        return f'{hours} hours, {minutes} minutes, {seconds} seconds'
+    elif hours > 0 and minutes > 0:
+        return f'{hours} hours, {minutes} minutes'
+    elif hours > 0 and seconds > 0:
+        return f'{hours} hours, {seconds} seconds'
+    elif hours > 0:
+        return f'{hours} hours'
+    elif minutes > 0 and seconds > 0:
+        return f'{minutes} minutes, {seconds} seconds'
+    elif minutes > 0:
+        return f'{minutes} minutes'
+    else:
+        return f'{seconds} seconds'
 
 
 def get_spell_class(class_num):
@@ -301,86 +351,1460 @@ def get_bane_dmg_body(num):
 
 def get_bane_dmg_race(num):
     """Returns the "Race Type" of a bane."""
-    if num == 12:
-        return 'Gnome'
-    elif num == 0:
-        return 'Warder'
+    if num == 1:
+        return "Human"
+    elif num == 2:
+        return "Barbarian"
+    elif num == 3:
+        return "Erudite"
+    elif num == 4:
+        return "Wood Elf"
+    elif num == 5:
+        return "High Elf"
+    elif num == 6:
+        return "Dark Elf"
+    elif num == 7:
+        return "Half Elf"
+    elif num == 8:
+        return "Dwarf"
+    elif num == 9:
+        return "Troll"
+    elif num == 10:
+        return "Ogre"
+    elif num == 11:
+        return "Halfling"
+    elif num == 12:
+        return "Gnome"
+    elif num == 13:
+        return "Aviak"
+    elif num == 14:
+        return "Werewolf"
+    elif num == 15:
+        return "Brownie"
+    elif num == 16:
+        return "Centaur"
+    elif num == 17:
+        return "Golem"
+    elif num == 18:
+        return "Giant"
+    elif num == 19:
+        return "Trakanon"
     elif num == 20:
-        return 'Venril Sathir'
+        return "Venril Sathir"
+    elif num == 21:
+        return "Evil Eye"
+    elif num == 22:
+        return "Beetle"
+    elif num == 23:
+        return "Kerran"
+    elif num == 24:
+        return "Fish"
+    elif num == 25:
+        return "Fairy"
     elif num == 26:
-        return 'Froglok'
+        return "Froglok"
+    elif num == 27:
+        return "Froglok"
+    elif num == 28:
+        return "Fungusman"
+    elif num == 29:
+        return "Gargoyle"
+    elif num == 30:
+        return "Gasbag"
+    elif num == 31:
+        return "Gelatinous Cube"
+    elif num == 32:
+        return "Ghost"
+    elif num == 33:
+        return "Ghoul"
+    elif num == 34:
+        return "Bat"
+    elif num == 35:
+        return "Eel"
+    elif num == 36:
+        return "Rat"
+    elif num == 37:
+        return "Snake"
+    elif num == 38:
+        return "Spider"
     elif num == 39:
-        return 'Gnoll'
+        return "Gnoll"
     elif num == 40:
-        return 'Goblin'
+        return "Goblin"
+    elif num == 41:
+        return "Gorilla"
+    elif num == 42:
+        return "Wolf"
     elif num == 43:
-        return 'Bear'
+        return "Bear"
+    elif num == 44:
+        return "Guard"
+    elif num == 45:
+        return "Demi Lich"
+    elif num == 46:
+        return "Imp"
+    elif num == 47:
+        return "Griffin"
+    elif num == 48:
+        return "Kobold"
+    elif num == 49:
+        return "Dragon"
+    elif num == 50:
+        return "Lion"
     elif num == 51:
-        return 'Lizard Man'
+        return "Lizard Man"
+    elif num == 52:
+        return "Mimic"
+    elif num == 53:
+        return "Minotaur"
     elif num == 54:
-        return 'Orc'
+        return "Orc"
+    elif num == 55:
+        return "Beggar"
+    elif num == 56:
+        return "Pixie"
+    elif num == 57:
+        return "Drachnid"
+    elif num == 58:
+        return "Solusek Ro"
+    elif num == 59:
+        return "Goblin"
     elif num == 60:
-        return 'Skeleton'
+        return "Skeleton"
+    elif num == 61:
+        return "Shark"
+    elif num == 62:
+        return "Tunare"
+    elif num == 63:
+        return "Tiger"
+    elif num == 64:
+        return "Treant"
+    elif num == 65:
+        return "Vampire"
+    elif num == 66:
+        return "Rallos Zek"
+    elif num == 67:
+        return "Human"
+    elif num == 68:
+        return "Tentacle Terror"
+    elif num == 69:
+        return "Will-O-Wisp"
+    elif num == 70:
+        return "Zombie"
+    elif num == 71:
+        return "Human"
+    elif num == 72:
+        return "Ship"
+    elif num == 73:
+        return "Launch"
+    elif num == 74:
+        return "Piranha"
     elif num == 75:
-        return 'Elemental'
-    elif num == 85 or num == 485:
-        return 'Spectre'
+        return "Elemental"
+    elif num == 76:
+        return "Puma"
+    elif num == 77:
+        return "Dark Elf"
+    elif num == 78:
+        return "Erudite"
+    elif num == 79:
+        return "Bixie"
+    elif num == 80:
+        return "Reanimated Hand"
+    elif num == 81:
+        return "Halfling"
+    elif num == 82:
+        return "Scarecrow"
+    elif num == 83:
+        return "Skunk"
+    elif num == 84:
+        return "Snake Elemental"
+    elif num == 85:
+        return "Spectre"
+    elif num == 86:
+        return "Sphinx"
+    elif num == 87:
+        return "Armadillo"
+    elif num == 88:
+        return "Clockwork Gnome"
+    elif num == 89:
+        return "Drake"
+    elif num == 90:
+        return "Barbarian"
+    elif num == 91:
+        return "Alligator"
+    elif num == 92:
+        return "Troll"
+    elif num == 93:
+        return "Ogre"
+    elif num == 94:
+        return "Dwarf"
+    elif num == 95:
+        return "Cazic Thule"
+    elif num == 96:
+        return "Cockatrice"
+    elif num == 97:
+        return "Daisy Man"
+    elif num == 98:
+        return "Vampire"
+    elif num == 99:
+        return "Amygdalan"
+    elif num == 100:
+        return "Dervish"
+    elif num == 101:
+        return "Efreeti"
+    elif num == 102:
+        return "Tadpole"
+    elif num == 103:
+        return "Kedge"
+    elif num == 104:
+        return "Leech"
+    elif num == 105:
+        return "Swordfish"
+    elif num == 106:
+        return "Guard"
+    elif num == 107:
+        return "Mammoth"
+    elif num == 108:
+        return "Eye"
+    elif num == 109:
+        return "Wasp"
+    elif num == 110:
+        return "Mermaid"
+    elif num == 111:
+        return "Harpy"
+    elif num == 112:
+        return "Guard"
+    elif num == 113:
+        return "Drixie"
+    elif num == 114:
+        return "Ghost Ship"
+    elif num == 115:
+        return "Clam"
+    elif num == 116:
+        return "Seahorse"
+    elif num == 117:
+        return "Ghost"
+    elif num == 118:
+        return "Ghost"
+    elif num == 119:
+        return "Sabertooth"
     elif num == 120:
-        return 'Wolf'
+        return "Wolf"
+    elif num == 121:
+        return "Gorgon"
+    elif num == 122:
+        return "Dragon"
+    elif num == 123:
+        return "Innoruuk"
+    elif num == 124:
+        return "Unicorn"
+    elif num == 125:
+        return "Pegasus"
+    elif num == 126:
+        return "Djinn"
     elif num == 127:
-        return 'Invisible Man'
+        return "Invisible Man"
+    elif num == 128:
+        return "Iksar"
+    elif num == 129:
+        return "Scorpion"
+    elif num == 130:
+        return "Vah Shir"
+    elif num == 131:
+        return "Sarnak"
+    elif num == 132:
+        return "Draglock"
+    elif num == 133:
+        return "Drolvarg"
     elif num == 134:
-        return 'Mosquito'
+        return "Mosquito"
+    elif num == 135:
+        return "Rhinoceros"
+    elif num == 136:
+        return "Xalgoz"
+    elif num == 137:
+        return "Goblin"
+    elif num == 138:
+        return "Yeti"
+    elif num == 139:
+        return "Iksar"
+    elif num == 140:
+        return "Giant"
+    elif num == 141:
+        return "Boat"
+    elif num == 144:
+        return "Burynai"
+    elif num == 145:
+        return "Goo"
+    elif num == 146:
+        return "Sarnak Spirit"
+    elif num == 147:
+        return "Iksar Spirit"
+    elif num == 148:
+        return "Fish"
+    elif num == 149:
+        return "Scorpion"
+    elif num == 150:
+        return "Erollisi"
+    elif num == 151:
+        return "Tribunal"
+    elif num == 152:
+        return "Bertoxxulous"
+    elif num == 153:
+        return "Bristlebane"
+    elif num == 154:
+        return "Fay Drake"
+    elif num == 155:
+        return "Undead Sarnak"
+    elif num == 156:
+        return "Ratman"
+    elif num == 157:
+        return "Wyvern"
+    elif num == 158:
+        return "Wurm"
+    elif num == 159:
+        return "Devourer"
+    elif num == 160:
+        return "Iksar Golem"
+    elif num == 161:
+        return "Undead Iksar"
+    elif num == 162:
+        return "Man-Eating Plant"
+    elif num == 163:
+        return "Raptor"
+    elif num == 164:
+        return "Sarnak Golem"
+    elif num == 165:
+        return "Dragon"
+    elif num == 166:
+        return "Animated Hand"
+    elif num == 167:
+        return "Succulent"
+    elif num == 168:
+        return "Holgresh"
+    elif num == 169:
+        return "Brontotherium"
+    elif num == 170:
+        return "Snow Dervish"
+    elif num == 171:
+        return "Dire Wolf"
+    elif num == 172:
+        return "Manticore"
+    elif num == 173:
+        return "Totem"
+    elif num == 174:
+        return "Ice Spectre"
+    elif num == 175:
+        return "Enchanted Armor"
+    elif num == 176:
+        return "Snow Rabbit"
+    elif num == 177:
+        return "Walrus"
+    elif num == 178:
+        return "Geonid"
+    elif num == 181:
+        return "Yakkar"
+    elif num == 182:
+        return "Faun"
+    elif num == 183:
+        return "Coldain"
+    elif num == 184:
+        return "Dragon"
+    elif num == 185:
+        return "Hag"
+    elif num == 186:
+        return "Hippogriff"
+    elif num == 187:
+        return "Siren"
+    elif num == 188:
+        return "Giant"
+    elif num == 189:
+        return "Giant"
+    elif num == 190:
+        return "Othmir"
+    elif num == 191:
+        return "Ulthork"
+    elif num == 192:
+        return "Dragon"
+    elif num == 193:
+        return "Abhorrent"
+    elif num == 194:
+        return "Sea Turtle"
+    elif num == 195:
+        return "Dragon"
+    elif num == 196:
+        return "Dragon"
+    elif num == 197:
+        return "Ronnie Test"
+    elif num == 198:
+        return "Dragon"
+    elif num == 199:
+        return "Shik'Nar"
+    elif num == 200:
+        return "Rockhopper"
+    elif num == 201:
+        return "Underbulk"
     elif num == 202:
-        return 'Grimling'
+        return "Grimling"
+    elif num == 203:
+        return "Worm"
+    elif num == 204:
+        return "Evan Test"
+    elif num == 205:
+        return "Shadel"
     elif num == 206:
-        return 'Owlbear'
+        return "Owlbear"
+    elif num == 207:
+        return "Rhino Beetle"
     elif num == 208:
-        return 'Vampire'
+        return "Vampire"
+    elif num == 209:
+        return "Earth Elemental"
+    elif num == 210:
+        return "Air Elemental"
+    elif num == 211:
+        return "Water Elemental"
+    elif num == 212:
+        return "Fire Elemental"
+    elif num == 213:
+        return "Wetfang Minnow"
+    elif num == 214:
+        return "Thought Horror"
     elif num == 215:
-        return 'Tegi'
+        return "Tegi"
+    elif num == 216:
+        return "Horse"
     elif num == 217:
-        return 'Shissar'
+        return "Shissar"
+    elif num == 218:
+        return "Fungal Fiend"
+    elif num == 219:
+        return "Vampire"
     elif num == 220:
-        return 'Stonegrabber'
+        return "Stonegrabber"
+    elif num == 221:
+        return "Scarlet Cheetah"
+    elif num == 222:
+        return "Zelniak"
+    elif num == 223:
+        return "Lightcrawler"
+    elif num == 224:
+        return "Shade"
+    elif num == 225:
+        return "Sunfbelow"
+    elif num == 226:
+        return "Sun Revenant"
+    elif num == 227:
+        return "Shrieker"
+    elif num == 228:
+        return "Galorian"
+    elif num == 229:
+        return "Netherbian"
     elif num == 230:
-        return 'Akheva'
+        return "Akheva"
+    elif num == 231:
+        return "Grieg Veneficus"
     elif num == 232:
-        return 'Sonic Wolf'
+        return "Sonic Wolf"
+    elif num == 233:
+        return "Ground Shaker"
+    elif num == 234:
+        return "Vah Shir Skeleton"
+    elif num == 235:
+        return "Wretch"
     elif num == 236:
-        return 'Seru'
+        return "Seru"
+    elif num == 237:
+        return "Recuso"
+    elif num == 238:
+        return "Vah Shir"
+    elif num == 239:
+        return "Guard"
+    elif num == 240:
+        return "Teleport Man"
+    elif num == 241:
+        return "Werewolf"
+    elif num == 242:
+        return "Nymph"
+    elif num == 243:
+        return "Dryad"
+    elif num == 244:
+        return "Treant"
+    elif num == 245:
+        return "Fly"
+    elif num == 246:
+        return "Tarew Marr"
+    elif num == 247:
+        return "Solusek Ro"
+    elif num == 248:
+        return "Clockwork Golem"
+    elif num == 249:
+        return "Clockwork Brain"
+    elif num == 250:
+        return "Banshee"
+    elif num == 251:
+        return "Guard of Justice"
+    elif num == 252:
+        return "Mini POM"
+    elif num == 253:
+        return "Diseased Fiend"
+    elif num == 254:
+        return "Solusek Ro Guard"
+    elif num == 255:
+        return "Bertoxxulous"
+    elif num == 256:
+        return "The Tribunal"
+    elif num == 257:
+        return "Terris Thule"
+    elif num == 258:
+        return "Vegerog"
+    elif num == 259:
+        return "Crocodile"
+    elif num == 260:
+        return "Bat"
+    elif num == 261:
+        return "Hraquis"
+    elif num == 262:
+        return "Tranquilion"
+    elif num == 263:
+        return "Tin Soldier"
+    elif num == 264:
+        return "Nightmare Wraith"
+    elif num == 265:
+        return "Malarian"
+    elif num == 266:
+        return "Knight of Pestilence"
+    elif num == 267:
+        return "Lepertoloth"
+    elif num == 268:
+        return "Bubonian"
+    elif num == 269:
+        return "Bubonian Underling"
+    elif num == 270:
+        return "Pusling"
+    elif num == 271:
+        return "Water Mephit"
+    elif num == 272:
+        return "Stormrider"
+    elif num == 273:
+        return "Junk Beast"
+    elif num == 274:
+        return "Broken Clockwork"
+    elif num == 275:
+        return "Giant Clockwork"
+    elif num == 276:
+        return "Clockwork Beetle"
+    elif num == 277:
+        return "Nightmare Goblin"
+    elif num == 278:
+        return "Karana"
+    elif num == 279:
+        return "Blood Raven"
+    elif num == 280:
+        return "Nightmare Gargoyle"
+    elif num == 281:
+        return "Mouth of Insanity"
+    elif num == 282:
+        return "Skeletal Horse"
+    elif num == 283:
+        return "Saryrn"
+    elif num == 284:
+        return "Fennin Ro"
+    elif num == 285:
+        return "Tormentor"
+    elif num == 286:
+        return "Soul Devourer"
+    elif num == 287:
+        return "Nightmare"
+    elif num == 288:
+        return "Rallos Zek"
+    elif num == 289:
+        return "Vallon Zek"
+    elif num == 290:
+        return "Tallon Zek"
+    elif num == 291:
+        return "Air Mephit"
+    elif num == 292:
+        return "Earth Mephit"
+    elif num == 293:
+        return "Fire Mephit"
+    elif num == 294:
+        return "Nightmare Mephit"
+    elif num == 295:
+        return "Zebuxoruk"
+    elif num == 296:
+        return "Mithaniel Marr"
+    elif num == 297:
+        return "Undead Knight"
+    elif num == 298:
+        return "The Rathe"
+    elif num == 299:
+        return "Xegony"
+    elif num == 300:
+        return "Fiend"
+    elif num == 301:
+        return "Test Object"
+    elif num == 302:
+        return "Crab"
+    elif num == 303:
+        return "Phoenix"
+    elif num == 304:
+        return "Dragon"
+    elif num == 305:
+        return "Bear"
+    elif num == 306:
+        return "Giant"
+    elif num == 307:
+        return "Giant"
+    elif num == 308:
+        return "Giant"
+    elif num == 309:
+        return "Giant"
+    elif num == 310:
+        return "Giant"
+    elif num == 311:
+        return "Giant"
+    elif num == 312:
+        return "Giant"
+    elif num == 313:
+        return "War Wraith"
+    elif num == 314:
+        return "Wrulon"
+    elif num == 315:
+        return "Kraken"
+    elif num == 316:
+        return "Poison Frog"
+    elif num == 317:
+        return "Nilborien"
+    elif num == 318:
+        return "Valorian"
+    elif num == 319:
+        return "War Boar"
+    elif num == 320:
+        return "Efreeti"
+    elif num == 321:
+        return "War Boar"
+    elif num == 322:
+        return "Valorian"
+    elif num == 323:
+        return "Animated Armor"
+    elif num == 324:
+        return "Undead Footman"
+    elif num == 325:
+        return "Rallos Zek Minion"
+    elif num == 326:
+        return "Arachnid"
+    elif num == 327:
+        return "Crystal Spider"
+    elif num == 328:
+        return "Zebuxoruk's Cage"
+    elif num == 329:
+        return "BoT Portal"
+    elif num == 330:
+        return "Froglok"
+    elif num == 331:
+        return "Troll"
+    elif num == 332:
+        return "Troll"
+    elif num == 333:
+        return "Troll"
+    elif num == 334:
+        return "Ghost"
+    elif num == 335:
+        return "Pirate"
+    elif num == 336:
+        return "Pirate"
+    elif num == 337:
+        return "Pirate"
+    elif num == 338:
+        return "Pirate"
+    elif num == 339:
+        return "Pirate"
+    elif num == 340:
+        return "Pirate"
+    elif num == 341:
+        return "Pirate"
+    elif num == 342:
+        return "Pirate"
+    elif num == 343:
+        return "Frog"
+    elif num == 344:
+        return "Troll Zombie"
+    elif num == 345:
+        return "Luggald"
+    elif num == 346:
+        return "Luggald"
+    elif num == 347:
+        return "Luggalds"
+    elif num == 348:
+        return "Drogmore"
+    elif num == 349:
+        return "Froglok Skeleton"
+    elif num == 350:
+        return "Undead Froglok"
+    elif num == 351:
+        return "Knight of Hate"
+    elif num == 352:
+        return "Arcanist of Hate"
+    elif num == 353:
+        return "Veksar"
+    elif num == 354:
+        return "Veksar"
+    elif num == 355:
+        return "Veksar"
     elif num == 356:
-        return 'Chokadai'
+        return "Chokidai"
+    elif num == 357:
+        return "Undead Chokidai"
+    elif num == 358:
+        return "Undead Veksar"
+    elif num == 359:
+        return "Vampire"
+    elif num == 360:
+        return "Vampire"
+    elif num == 361:
+        return "Rujarkian Orc"
+    elif num == 362:
+        return "Bone Golem"
+    elif num == 363:
+        return "Synarcana"
+    elif num == 364:
+        return "Sand Elf"
+    elif num == 365:
+        return "Vampire"
+    elif num == 366:
+        return "Rujarkian Orc"
+    elif num == 367:
+        return "Skeleton"
+    elif num == 368:
+        return "Mummy"
+    elif num == 369:
+        return "Goblin"
+    elif num == 370:
+        return "Insect"
+    elif num == 371:
+        return "Froglok Ghost"
+    elif num == 372:
+        return "Dervish"
+    elif num == 373:
+        return "Shade"
+    elif num == 374:
+        return "Golem"
+    elif num == 375:
+        return "Evil Eye"
+    elif num == 376:
+        return "Box"
+    elif num == 377:
+        return "Barrel"
+    elif num == 378:
+        return "Chest"
+    elif num == 379:
+        return "Vase"
+    elif num == 380:
+        return "Table"
+    elif num == 381:
+        return "Weapon Rack"
+    elif num == 382:
+        return "Coffin"
+    elif num == 383:
+        return "Bones"
+    elif num == 384:
+        return "Jokester"
+    elif num == 385:
+        return "Nihil"
+    elif num == 386:
+        return "Trusik"
+    elif num == 387:
+        return "Stone Worker"
+    elif num == 388:
+        return "Hynid"
+    elif num == 389:
+        return "Turepta"
+    elif num == 390:
+        return "Cragbeast"
+    elif num == 391:
+        return "Stonemite"
     elif num == 392:
-        return 'Ukun'
+        return "Ukun"
+    elif num == 393:
+        return "Ixt"
+    elif num == 394:
+        return "Ikaav"
+    elif num == 395:
+        return "Aneuk"
     elif num == 396:
-        return 'Kyv'
+        return "Kyv"
+    elif num == 397:
+        return "Noc"
+    elif num == 398:
+        return "Ratuk"
+    elif num == 399:
+        return "Taneth"
     elif num == 400:
-        return 'Huvul'
+        return "Huvul"
+    elif num == 401:
+        return "Mutna"
     elif num == 402:
-        return 'Mastruq'
+        return "Mastruq"
+    elif num == 403:
+        return "Taelosian"
+    elif num == 404:
+        return "Discord Ship"
+    elif num == 405:
+        return "Stone Worker"
+    elif num == 406:
+        return "Mata Muram"
+    elif num == 407:
+        return "Lightning Warrior"
+    elif num == 408:
+        return "Succubus"
     elif num == 409:
-        return 'Bazu'
+        return "Bazu"
     elif num == 410:
-        return 'Feran'
+        return "Feran"
+    elif num == 411:
+        return "Pyrilen"
+    elif num == 412:
+        return "Chimera"
+    elif num == 413:
+        return "Dragorn"
+    elif num == 414:
+        return "Murkglider"
+    elif num == 415:
+        return "Rat"
+    elif num == 416:
+        return "Bat"
+    elif num == 417:
+        return "Gelidran"
+    elif num == 418:
+        return "Discordling"
+    elif num == 419:
+        return "Girplan"
+    elif num == 420:
+        return "Minotaur"
+    elif num == 421:
+        return "Dragorn Box"
+    elif num == 422:
+        return "Runed Orb"
+    elif num == 423:
+        return "Dragon Bones"
+    elif num == 424:
+        return "Muramite Armor Pile"
+    elif num == 425:
+        return "Crystal Shard"
+    elif num == 426:
+        return "Portal"
+    elif num == 427:
+        return "Coin Purse"
+    elif num == 428:
+        return "Rock Pile"
+    elif num == 429:
+        return "Murkglider Egg Sack"
+    elif num == 430:
+        return "Drake"
+    elif num == 431:
+        return "Dervish"
     elif num == 432:
-        return 'Drake'
+        return "Drake"
+    elif num == 433:
+        return "Goblin"
+    elif num == 434:
+        return "Kirin"
+    elif num == 435:
+        return "Dragon"
+    elif num == 436:
+        return "Basilisk"
+    elif num == 437:
+        return "Dragon"
+    elif num == 438:
+        return "Dragon"
+    elif num == 439:
+        return "Puma"
+    elif num == 440:
+        return "Spider"
+    elif num == 441:
+        return "Spider Queen"
+    elif num == 442:
+        return "Animated Statue"
+    elif num == 445:
+        return "Dragon Egg"
+    elif num == 446:
+        return "Dragon Statue"
+    elif num == 447:
+        return "Lava Rock"
+    elif num == 448:
+        return "Animated Statue"
+    elif num == 449:
+        return "Spider Egg Sack"
+    elif num == 450:
+        return "Lava Spider"
+    elif num == 451:
+        return "Lava Spider Queen"
+    elif num == 452:
+        return "Dragon"
+    elif num == 453:
+        return "Giant"
+    elif num == 454:
+        return "Werewolf"
+    elif num == 455:
+        return "Kobold"
     elif num == 456:
-        return 'Sporali'
+        return "Sporali"
+    elif num == 457:
+        return "Gnomework"
+    elif num == 458:
+        return "Orc"
+    elif num == 459:
+        return "Corathus"
+    elif num == 460:
+        return "Coral"
+    elif num == 461:
+        return "Drachnid"
+    elif num == 462:
+        return "Drachnid Cocoon"
+    elif num == 463:
+        return "Fungus Patch"
+    elif num == 464:
+        return "Gargoyle"
+    elif num == 465:
+        return "Witheran"
     elif num == 466:
-        return 'Dark Lord'
+        return "Dark Lord"
+    elif num == 467:
+        return "Shiliskin"
+    elif num == 468:
+        return "Snake"
+    elif num == 469:
+        return "Evil Eye"
+    elif num == 470:
+        return "Minotaur"
+    elif num == 471:
+        return "Zombie"
+    elif num == 472:
+        return "Clockwork Boar"
+    elif num == 473:
+        return "Fairy"
+    elif num == 474:
+        return "Witheran"
+    elif num == 475:
+        return "Air Elemental"
+    elif num == 476:
+        return "Earth Elemental"
+    elif num == 477:
+        return "Fire Elemental"
+    elif num == 478:
+        return "Water Elemental"
+    elif num == 479:
+        return "Alligator"
+    elif num == 480:
+        return "Bear"
+    elif num == 481:
+        return "Scaled Wolf"
+    elif num == 482:
+        return "Wolf"
+    elif num == 483:
+        return "Spirit Wolf"
+    elif num == 484:
+        return "Skeleton"
+    elif num == 485:
+        return "Spectre"
+    elif num == 486:
+        return "Bolvirk"
+    elif num == 487:
+        return "Banshee"
+    elif num == 488:
+        return "Banshee"
+    elif num == 489:
+        return "Elddar"
+    elif num == 490:
+        return "Forest Giant"
+    elif num == 491:
+        return "Bone Golem"
+    elif num == 492:
+        return "Horse"
+    elif num == 493:
+        return "Pegasus"
+    elif num == 494:
+        return "Shambling Mound"
+    elif num == 495:
+        return "Scrykin"
+    elif num == 496:
+        return "Treant"
+    elif num == 497:
+        return "Vampire"
+    elif num == 498:
+        return "Ayonae Ro"
+    elif num == 499:
+        return "Sullon Zek"
+    elif num == 500:
+        return "Banner"
+    elif num == 501:
+        return "Flag"
+    elif num == 502:
+        return "Rowboat"
+    elif num == 503:
+        return "Bear Trap"
+    elif num == 504:
+        return "Clockwork Bomb"
+    elif num == 505:
+        return "Dynamite Keg"
+    elif num == 506:
+        return "Pressure Plate"
+    elif num == 507:
+        return "Puffer Spore"
+    elif num == 508:
+        return "Stone Ring"
+    elif num == 509:
+        return "Root Tentacle"
+    elif num == 510:
+        return "Runic Symbol"
+    elif num == 511:
+        return "Saltpetter Bomb"
+    elif num == 512:
+        return "Floating Skull"
+    elif num == 513:
+        return "Spike Trap"
+    elif num == 514:
+        return "Totem"
+    elif num == 515:
+        return "Web"
+    elif num == 516:
+        return "Wicker Basket"
+    elif num == 517:
+        return "Nightmare/Unicorn"
+    elif num == 518:
+        return "Horse"
+    elif num == 519:
+        return "Nightmare/Unicorn"
     elif num == 520:
-        return 'Bixie'
+        return "Bixie"
+    elif num == 521:
+        return "Centaur"
+    elif num == 522:
+        return "Drakkin"
+    elif num == 523:
+        return "Giant"
     elif num == 524:
-        return 'Gnoll'
+        return "Gnoll"
     elif num == 525:
-        return 'Griffin'
+        return "Griffin"
+    elif num == 526:
+        return "Giant Shade"
+    elif num == 527:
+        return "Harpy"
+    elif num == 528:
+        return "Mammoth"
+    elif num == 529:
+        return "Satyr"
+    elif num == 530:
+        return "Dragon"
+    elif num == 531:
+        return "Dragon"
+    elif num == 532:
+        return "Dyn'Leth"
+    elif num == 533:
+        return "Boat"
+    elif num == 534:
+        return "Weapon Rack"
+    elif num == 535:
+        return "Armor Rack"
+    elif num == 536:
+        return "Honey Pot"
+    elif num == 537:
+        return "Jum Jum Bucket"
+    elif num == 538:
+        return "Toolbox"
+    elif num == 539:
+        return "Stone Jug"
+    elif num == 540:
+        return "Small Plant"
+    elif num == 541:
+        return "Medium Plant"
+    elif num == 542:
+        return "Tall Plant"
+    elif num == 543:
+        return "Wine Cask"
+    elif num == 544:
+        return "Elven Boat"
+    elif num == 545:
+        return "Gnomish Boat"
+    elif num == 546:
+        return "Barrel Barge Ship"
+    elif num == 547:
+        return "Goo"
+    elif num == 548:
+        return "Goo"
+    elif num == 549:
+        return "Goo"
+    elif num == 550:
+        return "Merchant Ship"
+    elif num == 551:
+        return "Pirate Ship"
+    elif num == 552:
+        return "Ghost Ship"
+    elif num == 553:
+        return "Banner"
+    elif num == 554:
+        return "Banner"
+    elif num == 555:
+        return "Banner"
+    elif num == 556:
+        return "Banner"
+    elif num == 557:
+        return "Banner"
+    elif num == 558:
+        return "Aviak"
+    elif num == 559:
+        return "Beetle"
+    elif num == 560:
+        return "Gorilla"
+    elif num == 561:
+        return "Kedge"
+    elif num == 562:
+        return "Kerran"
+    elif num == 563:
+        return "Shissar"
+    elif num == 564:
+        return "Siren"
+    elif num == 565:
+        return "Sphinx"
+    elif num == 566:
+        return "Human"
+    elif num == 567:
+        return "Campfire"
+    elif num == 568:
+        return "Brownie"
+    elif num == 569:
+        return "Dragon"
+    elif num == 570:
+        return "Exoskeleton"
+    elif num == 571:
+        return "Ghoul"
+    elif num == 572:
+        return "Clockwork Guardian"
+    elif num == 573:
+        return "Mantrap"
     elif num == 574:
-        return 'Minotaur'
+        return "Minotaur"
+    elif num == 575:
+        return "Scarecrow"
+    elif num == 576:
+        return "Shade"
+    elif num == 577:
+        return "Rotocopter"
+    elif num == 578:
+        return "Tentacle Terror"
     elif num == 579:
-        return 'Wereorc'
+        return "Wereorc"
+    elif num == 580:
+        return "Worg"
     elif num == 581:
-        return 'Wyvern'
+        return "Wyvern"
+    elif num == 582:
+        return "Chimera"
+    elif num == 583:
+        return "Kirin"
+    elif num == 584:
+        return "Puma"
+    elif num == 585:
+        return "Boulder"
+    elif num == 586:
+        return "Banner"
+    elif num == 587:
+        return "Elven Ghost"
+    elif num == 588:
+        return "Human Ghost"
+    elif num == 589:
+        return "Chest"
+    elif num == 590:
+        return "Chest"
+    elif num == 591:
+        return "Crystal"
+    elif num == 592:
+        return "Coffin"
+    elif num == 593:
+        return "Guardian CPU"
+    elif num == 594:
+        return "Worg"
+    elif num == 595:
+        return "Mansion"
+    elif num == 596:
+        return "Floating Island"
+    elif num == 597:
+        return "Cragslither"
+    elif num == 598:
+        return "Wrulon"
+    elif num == 600:
+        return "Invisible Man of Zomm"
+    elif num == 601:
+        return "Robocopter of Zomm"
+    elif num == 602:
+        return "Burynai"
+    elif num == 603:
+        return "Frog"
+    elif num == 604:
+        return "Dracolich"
+    elif num == 605:
+        return "Iksar Ghost"
+    elif num == 606:
+        return "Iksar Skeleton"
+    elif num == 607:
+        return "Mephit"
+    elif num == 608:
+        return "Muddite"
+    elif num == 609:
+        return "Raptor"
+    elif num == 610:
+        return "Sarnak"
+    elif num == 611:
+        return "Scorpion"
+    elif num == 612:
+        return "Tsetsian"
+    elif num == 613:
+        return "Wurm"
+    elif num == 614:
+        return "Nekhon"
+    elif num == 615:
+        return "Hydra Crystal"
+    elif num == 616:
+        return "Crystal Sphere"
+    elif num == 617:
+        return "Gnoll"
+    elif num == 618:
+        return "Sokokar"
+    elif num == 619:
+        return "Stone Pylon"
+    elif num == 620:
+        return "Demon Vulture"
+    elif num == 621:
+        return "Wagon"
+    elif num == 622:
+        return "God of Discord"
+    elif num == 623:
+        return "Feran Mount"
+    elif num == 624:
+        return "Ogre NPC"
+    elif num == 625:
+        return "Sokokar Mount"
+    elif num == 626:
+        return "Giant"
+    elif num == 627:
+        return "Sokokar"
+    elif num == 628:
+        return "10th Anniversary Banner"
+    elif num == 629:
+        return "10th Anniversary Cake"
+    elif num == 630:
+        return "Wine Cask"
+    elif num == 631:
+        return "Hydra Mount"
+    elif num == 632:
+        return "Hydra NPC"
+    elif num == 633:
+        return "Wedding Fbelows"
+    elif num == 634:
+        return "Wedding Arbor"
+    elif num == 635:
+        return "Wedding Altar"
+    elif num == 636:
+        return "Powder Keg"
+    elif num == 637:
+        return "Apexus"
+    elif num == 638:
+        return "Bellikos"
+    elif num == 639:
+        return "Brell's First Creation"
+    elif num == 640:
+        return "Brell"
+    elif num == 641:
+        return "Crystalskin Ambuloid"
+    elif num == 642:
+        return "Cliknar Queen"
+    elif num == 643:
+        return "Cliknar Soldier"
+    elif num == 644:
+        return "Cliknar Worker"
+    elif num == 645:
+        return "Coldain"
+    elif num == 646:
+        return "Coldain"
+    elif num == 647:
+        return "Crystalskin Sessiloid"
+    elif num == 648:
+        return "Genari"
+    elif num == 649:
+        return "Gigyn"
+    elif num == 650:
+        return "Greken"
+    elif num == 651:
+        return "Greken"
+    elif num == 652:
+        return "Cliknar Mount"
+    elif num == 653:
+        return "Telmira"
+    elif num == 654:
+        return "Spider Mount"
+    elif num == 655:
+        return "Bear Mount"
+    elif num == 656:
+        return "Rat Mount"
+    elif num == 657:
+        return "Sessiloid Mount"
+    elif num == 658:
+        return "Morell Thule"
+    elif num == 659:
+        return "Marionette"
+    elif num == 660:
+        return "Book Dervish"
+    elif num == 661:
+        return "Topiary Lion"
+    elif num == 662:
+        return "Rotdog"
+    elif num == 663:
+        return "Amygdalan"
+    elif num == 664:
+        return "Sandman"
+    elif num == 665:
+        return "Grandfather Clock"
+    elif num == 666:
+        return "Gingerbread Man"
+    elif num == 667:
+        return "Royal Guard"
+    elif num == 668:
+        return "Rabbit"
+    elif num == 669:
+        return "Blind Dreamer"
+    elif num == 670:
+        return "Cazic Thule"
+    elif num == 671:
+        return "Topiary Lion Mount"
+    elif num == 672:
+        return "Rot Dog Mount"
+    elif num == 673:
+        return "Goral Mount"
+    elif num == 674:
+        return "Selyrah Mount"
+    elif num == 675:
+        return "Sclera Mount"
+    elif num == 676:
+        return "Braxi Mount"
+    elif num == 677:
+        return "Kangon Mount"
+    elif num == 678:
+        return "Erudite"
+    elif num == 679:
+        return "Wurm Mount"
+    elif num == 680:
+        return "Raptor Mount"
+    elif num == 681:
+        return "Invisible Man"
+    elif num == 682:
+        return "Whirligig"
+    elif num == 683:
+        return "Gnomish Balloon"
+    elif num == 684:
+        return "Gnomish Rocket Pack"
+    elif num == 685:
+        return "Gnomish Hovering Transport"
+    elif num == 686:
+        return "Selyrah"
+    elif num == 687:
+        return "Goral"
+    elif num == 688:
+        return "Braxi"
+    elif num == 689:
+        return "Kangon"
+    elif num == 690:
+        return "Invisible Man"
+    elif num == 691:
+        return "Floating Tower"
+    elif num == 692:
+        return "Explosive Cart"
+    elif num == 693:
+        return "Blimp Ship"
+    elif num == 694:
+        return "Tumbleweed"
+    elif num == 695:
+        return "Alaran"
+    elif num == 696:
+        return "Swinetor"
+    elif num == 697:
+        return "Triumvirate"
+    elif num == 698:
+        return "Hadal"
+    elif num == 699:
+        return "Hovering Platform"
+    elif num == 700:
+        return "Parasitic Scavenger"
+    elif num == 701:
+        return "Grendlaen"
+    elif num == 702:
+        return "Ship in a Bottle"
+    elif num == 703:
+        return "Alaran Sentry Stone"
+    elif num == 704:
+        return "Dervish"
+    elif num == 705:
+        return "Regeneration Pool"
+    elif num == 706:
+        return "Teleportation Stand"
+    elif num == 707:
+        return "Relic Case"
+    elif num == 708:
+        return "Alaran Ghost"
+    elif num == 709:
+        return "Skystrider"
+    elif num == 710:
+        return "Water Spout"
+    elif num == 711:
+        return "Aviak Pull Along"
+    elif num == 712:
+        return "Gelatinous Cube"
+    elif num == 713:
+        return "Cat"
+    elif num == 714:
+        return "Elk Head"
+    elif num == 715:
+        return "Holgresh"
+    elif num == 716:
+        return "Beetle"
+    elif num == 717:
+        return "Vine Maw"
+    elif num == 718:
+        return "Ratman"
+    elif num == 719:
+        return "Fallen Knight"
+    elif num == 720:
+        return "Flying Carpet"
+    elif num == 721:
+        return "Carrier Hand"
+    elif num == 722:
+        return "Akheva"
+    elif num == 723:
+        return "Servant of Shadow"
+    elif num == 724:
+        return "Luclin"
+    elif num == 725:
+        return "Xaric"
+    elif num == 726:
+        return "Dervish"
+    elif num == 727:
+        return "Dervish"
+    elif num == 728:
+        return "Luclin"
+    elif num == 729:
+        return "Luclin"
+    elif num == 730:
+        return "Orb"
+    elif num == 731:
+        return "Luclin"
+    elif num == 732:
+        return "Pegasus"
+    elif num == 2250:
+        return "Interactive Object"
+    elif num == 2254:
+        return "Node"
     else:
         return f'Unknown Race {num}'
 
@@ -407,6 +1831,7 @@ def get_elem_dmg_type(num):
         return 'Corruption'
     else:
         raise Exception(f'Unknown elemental type: {num}')
+
 
 def translate_specials(spc):
     specials = []
@@ -484,15 +1909,177 @@ def translate_specials(spc):
     return specials
 
 
-def get_aug_type(num):
+def get_all_skills():
+    return [{0: '1H Blunt'},
+            {1: '1H Slashing'},
+            {2: '2H Blunt'},
+            {3: '2H Slashing'},
+            {4: 'Abjuration'},
+            {5: 'Alteration'},
+            {6: 'Apply Poison'},
+            {7: 'Archery'},
+            {8: 'Backstab'},
+            {9: 'Bind Wound'},
+            {10: 'Bash'},
+            {11: 'Block'},
+            {12: 'Brass Instruments'},
+            {13: 'Channeling'},
+            {14: 'Conjuration'},
+            {15: 'Defense'},
+            {16: 'Disarm'},
+            {17: 'Disarm Traps'},
+            {18: 'Divination'},
+            {19: 'Dodge'},
+            {20: 'Double Attack'},
+            {21: 'Dragon Punch'},
+            {22: 'Dual Wield'},
+            {23: 'Eagle Strike'},
+            {24: 'Evocation'},
+            {25: 'Feign Death'},
+            {26: 'Flying Kick'},
+            {27: 'Forage'},
+            {28: 'Hand to Hand'},
+            {29: 'Hide'},
+            {30: 'Kick'},
+            {31: 'Meditate'},
+            {32: 'Mend'},
+            {33: 'Offense'},
+            {34: 'Parry'},
+            {35: 'Pick Lock'},
+            {36: '1H Piercing'},
+            {37: 'Riposte'},
+            {38: 'Round Kick'},
+            {39: 'Safe Fall'},
+            {40: 'Sense Heading'},
+            {41: 'Singing'},
+            {42: 'Sneak'},
+            {43: 'Specialize Abjure'},
+            {44: 'Specialize Alteration'},
+            {45: 'Specialize Conjuration'},
+            {46: 'Specialize Divination'},
+            {47: 'Specialize Evocation'},
+            {48: 'Pick Pockets'},
+            {49: 'Stringed Instruments'},
+            {50: 'Swimming'},
+            {51: 'Throwing'},
+            {52: 'Tiger Claw'},
+            {53: 'Tracking'},
+            {54: 'Wind Instruments'},
+            {55: 'Fishing'},
+            {56: 'Make Poison'},
+            {57: 'Tinkering'},
+            {58: 'Research'},
+            {59: 'Alchemy'},
+            {60: 'Baking'},
+            {61: 'Tailoring'},
+            {62: 'Sense Traps'},
+            {63: 'Blacksmithing'},
+            {64: 'Fletching'},
+            {65: 'Brewing'},
+            {66: 'Alcohol Tolerance'},
+            {67: 'Begging'},
+            {68: 'Jewelry Making'},
+            {69: 'Pottery'},
+            {70: 'Percussion Instruments'},
+            {71: 'Intimidation'},
+            {72: 'Berserking'},
+            {73: 'Taunt'},
+            {74: 'Frenzy'},
+            {75: 'Remove Trap'},
+            {76: 'Triple Attack'},
+            {77: '2H Piercing'}]
+
+
+def get_aug_restrict(num):
+    if num == 0:
+        return 'No Restrictions'
+    elif num == 1:
+        return 'Armor Only'
+    elif num == 2:
+        return 'Weapons Only'
+    elif num == 3:
+        return 'One-Handed Weapons Only'
+    elif num == 4:
+        return 'Two-Handed Weapons ONly'
+    elif num == 5:
+        return 'One-Handed Slashing Weapons Only'
+    elif num == 6:
+        return 'One-Handed Blunt Weapons Only'
+    elif num == 7:
+        return 'One-Handed Piercing Weapons Only'
+    elif num == 8:
+        return 'Hand-to-Hand Weapons Only'
+    elif num == 9:
+        return 'Two-Handed Slashing Weapons Only'
+    elif num == 10:
+        return 'Two-Handed Blunt Weapons Only'
+    elif num == 11:
+        return 'Two-Handed Piercing Weapons Only'
+    elif num == 12:
+        return 'Ranged Weapons Only'
+    elif num == 13:
+        return 'Shields Only'
+    elif num == 14:
+        return 'One-Handed Slashing Weapons, One-Handed Blunt Weaspons, or Hand-to-Hand Weapons Only'
+    elif num == 15:
+        return 'One-Handed Blunt Weapons or Hand-to-Hand Weapons Only'
+    else:
+        return 'Unknown Restrictions'
+
+
+def get_aug_types(num):
+    out_str = ''
+    while num > 0:
+        if num >= 4096:
+            return 'AUGMENT HIGHER THAN 13, FIX ME'
+        if num >= 2048:
+            num -= 2048
+            out_str = '12 (FIX ME), ' + out_str
+        if num >= 1024:
+            num -= 1024
+            out_str = '11 (FIX ME), ' + out_str
+        if num >= 512:
+            num -= 512
+            out_str = '10 (FIX ME), ' + out_str
+        if num >= 256:
+            num -= 256
+            out_str = '9 (FIX ME), ' + out_str
+        if num >= 128:
+            num -= 128
+            out_str = '8 (General: Raid), ' + out_str
+        if num >= 64:
+            num -= 64
+            out_str = '7 (FIX ME), ' + out_str
+        if num >= 32:
+            num -= 32
+            out_str = '6 (FIX ME), ' + out_str
+        if num >= 16:
+            num -= 16
+            out_str = '5 (FIX ME), ' + out_str
+        if num >= 8:
+            num -= 8
+            out_str = '4 (Weapon), ' + out_str
+        if num >= 4:
+            num -= 4
+            out_str = '3 (Spells), ' + out_str
+        if num >= 2:
+            num -= 2
+            out_str = '2 (Elite), ' + out_str
+        if num >= 1:
+            num -= 1
+            out_str = '1 (Stats), ' + out_str
+    return out_str[:-2].strip()
+
+
+def get_aug_slot_type(num):
     if num == 1:
         return '1 (Stats)'
     elif num == 2:
-        return '2 (Worn)'
+        return '2 (Elite)'
     elif num == 3:
         return '3 (Spells)'
     elif num == 4:
-        return '4 (Proc)'
+        return '4 (Weapon)'
     else:
         return 'HEY IDIOT, FIX ME'
 
@@ -508,125 +2095,125 @@ def get_class_string(num):
     while num > 0:
         if num >= 32768:
             num -= 32768
-            out_str += 'BER '
+            out_str = ' BER' + out_str
         if num >= 16384:
             num -= 16384
-            out_str += 'BST '
+            out_str = ' BST' + out_str
         if num >= 8192:
             num -= 8192
-            out_str += 'ENC '
+            out_str = ' ENC' + out_str
         if num >= 4096:
             num -= 4096
-            out_str += 'MAG '
+            out_str = ' MAG' + out_str
         if num >= 2048:
             num -= 2048
-            out_str += 'WIZ '
+            out_str = ' WIZ' + out_str
         if num >= 1024:
             num -= 1024
-            out_str += 'NEC '
+            out_str = ' NEC' + out_str
         if num >= 512:
             num -= 512
-            out_str += 'SHM '
+            out_str = ' SHM' + out_str
         if num >= 256:
             num -= 256
-            out_str += 'ROG '
+            out_str = ' ROG' + out_str
         if num >= 128:
             num -= 128
-            out_str += 'BRD '
+            out_str = ' BRD' + out_str
         if num >= 64:
             num -= 64
-            out_str += 'MNK '
+            out_str = ' MNK' + out_str
         if num >= 32:
             num -= 32
-            out_str += 'DRU '
+            out_str = ' DRU' + out_str
         if num >= 16:
             num -= 16
-            out_str += 'SHD '
+            out_str = ' SHD' + out_str
         if num >= 8:
             num -= 8
-            out_str += 'RNG '
+            out_str = ' RNG' + out_str
         if num >= 4:
             num -= 4
-            out_str += 'PAL '
+            out_str = ' PAL' + out_str
         if num >= 2:
             num -= 2
-            out_str += 'CLR '
+            out_str = ' CLR' + out_str
         if num >= 1:
             num -= 1
-            out_str += 'WAR '
-    return out_str.strip()
+            out_str = ' WAR' + out_str
+    return out_str[1:]
 
 
 def get_slot_string(num):
-    """Returns the classes that can use this item."""
+    """Returns the slots that this item goes in"""
     out_str = ''
     if num == 0:
         return 'NONE'
     while num > 0:
         if num >= 4194304:
             num -= 4194304
-            out_str += 'Ammo '
+            out_str = ' Ammo' + out_str
         if num >= 1048576:
             num -= 1048576
-            out_str += 'Waist '
+            out_str = ' Waist' + out_str
         if num >= 524288:
             num -= 524288
-            out_str += 'Feet '
+            out_str = ' Feet' + out_str
         if num >= 262144:
             num -= 262144
-            out_str += 'Legs '
+            out_str = ' Legs' + out_str
         if num >= 131072:
             num -= 131072
-            out_str += 'Chest '
+            out_str = ' Chest' + out_str
         if num >= 65536:
             num -= 65536
         if num >= 32768:
             num -= 32768
-            out_str += 'Finger '
+            out_str = ' Finger' + out_str
         if num >= 16384:
             num -= 16384
-            out_str += 'Secondary '
+            out_str = ' Secondary' + out_str
         if num >= 8192:
             num -= 8192
-            out_str += 'Primary '
+            out_str = ' Primary' + out_str
         if num >= 4096:
             num -= 4096
-            out_str += 'Hands '
+            out_str = ' Hands' + out_str
         if num >= 2048:
             num -= 2048
-            out_str += 'Range '
+            out_str = ' Range' + out_str
         if num >= 1024:
             num -= 1024
         if num >= 512:
             num -= 512
-            out_str += 'Wrist '
+            out_str = ' Wrist' + out_str
         if num >= 256:
             num -= 256
-            out_str += 'Back '
+            out_str = ' Back' + out_str
         if num >= 128:
             num -= 128
-            out_str += 'Arms '
+            out_str = ' Arms' + out_str
         if num >= 64:
             num -= 64
-            out_str += 'Shoulders '
+            out_str = ' Shoulders' + out_str
         if num >= 32:
             num -= 32
-            out_str += 'Neck '
+            out_str = ' Neck' + out_str
         if num >= 16:
             num -= 16
         if num >= 8:
             num -= 8
-            out_str += 'Face '
+            out_str = ' Face' + out_str
         if num >= 4:
             num -= 4
-            out_str += 'Head '
+            out_str = ' Head' + out_str
         if num >= 2:
             num -= 2
-            out_str += 'Ear '
+            out_str = ' Ear' + out_str
         if num >= 1:
             num -= 1
-            out_str += 'Charm '
-    return out_str.strip()
+            out_str = ' Charm' + out_str
+    return out_str[1:]
 
 
 def get_type_string(num):
@@ -713,6 +2300,8 @@ def lookup_weapon_types(name):
         return 45
     elif 'Shield' in name:
         return 8
+    elif 'Thrown' in name:
+        return 7
     else:
         return 10
 
@@ -743,7 +2332,7 @@ def get_stat_weights(weights, item, bane_body=None):
             else:
                 value += item.banedmgraceamt * weights[weight]
         else:
-            value += getattr(item, weight) * weights[weight]
+            value += int(getattr(item, weight)) * weights[weight]
     return value
 
 
@@ -793,50 +2382,50 @@ def lookup_slot(name):
     elif 'Waist' in name:
         return 1048576
     elif 'Ammo' in name:
-        return 2097152
+        return 4194304
     else:
         raise Exception(f'Unknown slot name: {name}.')
 
 
-def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
+def get_focus_values(focus_type, sub_type, engine, SpellsNew):
     with Session(bind=engine) as session:
         ret_ids = []
         # "All" queries
         ignore_effects = []
         for i in range(2, 13):
-            ignore_effects.append(getattr(SpellsNewReference, f'effectid{i}').not_in([137, 138]))
+            ignore_effects.append(getattr(SpellsNew, f'effectid{i}').not_in([137, 138]))
         ignore_params = and_(*ignore_effects)
-        all_haste_query = session.query(SpellsNewReference.id).\
-            filter(SpellsNewReference.effectid1 == 127).\
-            filter(SpellsNewReference.effect_base_value1 > 0).\
-            filter(ignore_params).\
-            order_by(SpellsNewReference.id)
+        all_haste_query = session.query(SpellsNew.id). \
+            filter(SpellsNew.effectid1 == 127). \
+            filter(SpellsNew.effect_base_value1 > 0). \
+            filter(ignore_params). \
+            order_by(SpellsNew.id)
 
-        all_range_query = session.query(SpellsNewReference.id).\
-            filter(SpellsNewReference.effectid1 == 129).\
-            filter(SpellsNewReference.effect_base_value1 > 0).\
-            filter(ignore_params).\
-            order_by(SpellsNewReference.id)
+        all_range_query = session.query(SpellsNew.id). \
+            filter(SpellsNew.effectid1 == 129). \
+            filter(SpellsNew.effect_base_value1 > 0). \
+            filter(ignore_params). \
+            order_by(SpellsNew.id)
 
         add_effects = []
         ignore_effects = []
         for i in range(2, 13):
-            add_effects.append(getattr(SpellsNewReference, f'effectid{i}').in_([139]))
-            ignore_effects.append(getattr(SpellsNewReference, f'effectid{i}').not_in([138]))
+            add_effects.append(getattr(SpellsNew, f'effectid{i}').in_([139]))
+            ignore_effects.append(getattr(SpellsNew, f'effectid{i}').not_in([138]))
         add_params = or_(*add_effects)
         ignore_params = and_(*ignore_effects)
-        all_pres_query = session.query(SpellsNewReference.id).\
-            filter(SpellsNewReference.effectid1 == 132).\
-            filter(SpellsNewReference.effect_base_value1 > 0).\
-            filter(ignore_params).\
-            filter(add_params).\
-            order_by(SpellsNewReference.id)
+        all_pres_query = session.query(SpellsNew.id). \
+            filter(SpellsNew.effectid1 == 132). \
+            filter(SpellsNew.effect_base_value1 > 0). \
+            filter(ignore_params). \
+            filter(add_params). \
+            order_by(SpellsNew.id)
 
         if focus_type == 'Beneficial':
             add_effects = []
             for i in range(2, 13):
-                add_effects.append(and_(getattr(SpellsNewReference, f'effectid{i}') == 138,
-                                        getattr(SpellsNewReference, f'effect_base_value{i}') == 1))
+                add_effects.append(and_(getattr(SpellsNew, f'effectid{i}') == 138,
+                                        getattr(SpellsNew, f'effect_base_value{i}') == 1))
             add_params = or_(*add_effects)
 
             if sub_type == 'Preservation':
@@ -844,11 +2433,11 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
                 for entry in all_ids:
                     ret_ids.append(entry[0])
 
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 132). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 132). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -858,11 +2447,11 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
                 for entry in all_ids:
                     ret_ids.append(entry[0])
 
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 129). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 129). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -872,31 +2461,31 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
                 for entry in all_ids:
                     ret_ids.append(entry[0])
 
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 127). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 127). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
                 return ret_ids
             elif sub_type == 'Duration':
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 128). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 128). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
                 return ret_ids
             elif sub_type == 'Healing':
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 125). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 125). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -906,8 +2495,8 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
         elif focus_type == 'Detrimental':
             add_effects = []
             for i in range(2, 13):
-                add_effects.append(and_(getattr(SpellsNewReference, f'effectid{i}') == 138,
-                                        getattr(SpellsNewReference, f'effect_base_value{i}') == 0))
+                add_effects.append(and_(getattr(SpellsNew, f'effectid{i}') == 138,
+                                        getattr(SpellsNew, f'effect_base_value{i}') == 0))
             add_params = or_(*add_effects)
             if sub_type == 'Preservation':
                 all_ids = all_pres_query.all()
@@ -916,15 +2505,15 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
 
                 ignore_effects = []
                 for i in range(2, 13):
-                    ignore_effects.append(getattr(SpellsNewReference, f'effectid{i}').not_in([138]))
+                    ignore_effects.append(getattr(SpellsNew, f'effectid{i}').not_in([138]))
                 ignore_params = and_(*ignore_effects)
 
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 132). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 132). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
                     filter(ignore_params). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -934,11 +2523,11 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
                 for entry in all_ids:
                     ret_ids.append(entry[0])
 
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 129). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 129). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -948,21 +2537,21 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
                 for entry in all_ids:
                     ret_ids.append(entry[0])
 
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 127). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 127). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
                 return ret_ids
             elif sub_type == 'Duration':
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 128). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 128). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -970,15 +2559,15 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
             elif sub_type == 'Damage (All)':
                 ignore_effects = []
                 for i in range(2, 13):
-                    ignore_effects.append(getattr(SpellsNewReference, f'effectid{i}').not_in([135, 140]))
+                    ignore_effects.append(getattr(SpellsNew, f'effectid{i}').not_in([135, 140]))
                 ignore_params = and_(*ignore_effects)
 
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 124). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 124). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
                     filter(ignore_params). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -987,19 +2576,19 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
                 ignore_effects = []
                 type_effects = []
                 for i in range(2, 13):
-                    ignore_effects.append(getattr(SpellsNewReference, f'effectid{i}').not_in([140]))
-                    type_effects.append(and_(getattr(SpellsNewReference, f'effectid{i}') == 135,
-                                             getattr(SpellsNewReference, f'effect_base_value{i}') == 2))
+                    ignore_effects.append(getattr(SpellsNew, f'effectid{i}').not_in([140]))
+                    type_effects.append(and_(getattr(SpellsNew, f'effectid{i}') == 135,
+                                             getattr(SpellsNew, f'effect_base_value{i}') == 2))
                 ignore_params = and_(*ignore_effects)
                 type_effects = or_(*type_effects)
 
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 124). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 124). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
                     filter(ignore_params). \
                     filter(type_effects). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -1008,19 +2597,19 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
                 ignore_effects = []
                 type_effects = []
                 for i in range(2, 13):
-                    ignore_effects.append(getattr(SpellsNewReference, f'effectid{i}').not_in([140]))
-                    type_effects.append(and_(getattr(SpellsNewReference, f'effectid{i}') == 135,
-                                             getattr(SpellsNewReference, f'effect_base_value{i}') == 3))
+                    ignore_effects.append(getattr(SpellsNew, f'effectid{i}').not_in([140]))
+                    type_effects.append(and_(getattr(SpellsNew, f'effectid{i}') == 135,
+                                             getattr(SpellsNew, f'effect_base_value{i}') == 3))
                 ignore_params = and_(*ignore_effects)
                 type_effects = or_(*type_effects)
 
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 124). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 124). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
                     filter(ignore_params). \
                     filter(type_effects). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -1029,19 +2618,19 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
                 ignore_effects = []
                 type_effects = []
                 for i in range(2, 13):
-                    ignore_effects.append(getattr(SpellsNewReference, f'effectid{i}').not_in([140]))
-                    type_effects.append(and_(getattr(SpellsNewReference, f'effectid{i}') == 135,
-                                             getattr(SpellsNewReference, f'effect_base_value{i}') == 1))
+                    ignore_effects.append(getattr(SpellsNew, f'effectid{i}').not_in([140]))
+                    type_effects.append(and_(getattr(SpellsNew, f'effectid{i}') == 135,
+                                             getattr(SpellsNew, f'effect_base_value{i}') == 1))
                 ignore_params = and_(*ignore_effects)
                 type_effects = or_(*type_effects)
 
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 124). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 124). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
                     filter(ignore_params). \
                     filter(type_effects). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -1050,19 +2639,19 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
                 ignore_effects = []
                 type_effects = []
                 for i in range(2, 13):
-                    ignore_effects.append(getattr(SpellsNewReference, f'effectid{i}').not_in([140]))
-                    type_effects.append(and_(getattr(SpellsNewReference, f'effectid{i}') == 135,
-                                             getattr(SpellsNewReference, f'effect_base_value{i}') == 4))
+                    ignore_effects.append(getattr(SpellsNew, f'effectid{i}').not_in([140]))
+                    type_effects.append(and_(getattr(SpellsNew, f'effectid{i}') == 135,
+                                             getattr(SpellsNew, f'effect_base_value{i}') == 4))
                 ignore_params = and_(*ignore_effects)
                 type_effects = or_(*type_effects)
 
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 124). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 124). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
                     filter(ignore_params). \
                     filter(type_effects). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -1071,19 +2660,19 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
                 ignore_effects = []
                 type_effects = []
                 for i in range(2, 13):
-                    ignore_effects.append(getattr(SpellsNewReference, f'effectid{i}').not_in([140]))
-                    type_effects.append(and_(getattr(SpellsNewReference, f'effectid{i}') == 135,
-                                             getattr(SpellsNewReference, f'effect_base_value{i}') == 5))
+                    ignore_effects.append(getattr(SpellsNew, f'effectid{i}').not_in([140]))
+                    type_effects.append(and_(getattr(SpellsNew, f'effectid{i}') == 135,
+                                             getattr(SpellsNew, f'effect_base_value{i}') == 5))
                 ignore_params = and_(*ignore_effects)
                 type_effects = or_(*type_effects)
 
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 124). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 124). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
                     filter(ignore_params). \
                     filter(type_effects). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -1091,16 +2680,16 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
             elif sub_type == 'Damage (DoT)':
                 type_effects = []
                 for i in range(2, 13):
-                    type_effects.append(and_(getattr(SpellsNewReference, f'effectid{i}') == 140,
-                                             getattr(SpellsNewReference, f'effect_base_value{i}') >= 4))
+                    type_effects.append(and_(getattr(SpellsNew, f'effectid{i}') == 140,
+                                             getattr(SpellsNew, f'effect_base_value{i}') >= 4))
                 type_effects = or_(*type_effects)
 
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 124). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 124). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(add_params). \
                     filter(type_effects). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -1109,10 +2698,10 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
                 raise f'Unknown subtype: {sub_type}'
         elif focus_type == 'Pet':
             if sub_type == 'Pet Power':
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 167). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
-                    order_by(SpellsNewReference.id)
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 167). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -1136,14 +2725,14 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
             if sub_type == 'Wind':
                 type_effects = []
                 for i in range(2, 13):
-                    type_effects.append(and_(getattr(SpellsNewReference, f'effectid{i}') == 414,
-                                             getattr(SpellsNewReference, f'effect_base_value{i}') == 54))
+                    type_effects.append(and_(getattr(SpellsNew, f'effectid{i}') == 414,
+                                             getattr(SpellsNew, f'effect_base_value{i}') == 54))
                 type_effects = or_(*type_effects)
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 413). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 413). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(type_effects). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -1151,14 +2740,14 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
             elif sub_type == 'Stringed':
                 type_effects = []
                 for i in range(2, 13):
-                    type_effects.append(and_(getattr(SpellsNewReference, f'effectid{i}') == 414,
-                                             getattr(SpellsNewReference, f'effect_base_value{i}') == 49))
+                    type_effects.append(and_(getattr(SpellsNew, f'effectid{i}') == 414,
+                                             getattr(SpellsNew, f'effect_base_value{i}') == 49))
                 type_effects = or_(*type_effects)
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 413). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 413). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(type_effects). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -1166,14 +2755,14 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
             elif sub_type == 'Brass':
                 type_effects = []
                 for i in range(2, 13):
-                    type_effects.append(and_(getattr(SpellsNewReference, f'effectid{i}') == 414,
-                                             getattr(SpellsNewReference, f'effect_base_value{i}') == 12))
+                    type_effects.append(and_(getattr(SpellsNew, f'effectid{i}') == 414,
+                                             getattr(SpellsNew, f'effect_base_value{i}') == 12))
                 type_effects = or_(*type_effects)
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 413). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 413). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(type_effects). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -1181,14 +2770,14 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
             elif sub_type == 'Percussion':
                 type_effects = []
                 for i in range(2, 13):
-                    type_effects.append(and_(getattr(SpellsNewReference, f'effectid{i}') == 414,
-                                             getattr(SpellsNewReference, f'effect_base_value{i}') == 70))
+                    type_effects.append(and_(getattr(SpellsNew, f'effectid{i}') == 414,
+                                             getattr(SpellsNew, f'effect_base_value{i}') == 70))
                 type_effects = or_(*type_effects)
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 413). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 413). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(type_effects). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -1196,14 +2785,14 @@ def get_focus_values(focus_type, sub_type, engine, SpellsNewReference):
             elif sub_type == 'Singing':
                 type_effects = []
                 for i in range(2, 13):
-                    type_effects.append(and_(getattr(SpellsNewReference, f'effectid{i}') == 414,
-                                             getattr(SpellsNewReference, f'effect_base_value{i}') == 41))
+                    type_effects.append(and_(getattr(SpellsNew, f'effectid{i}') == 414,
+                                             getattr(SpellsNew, f'effect_base_value{i}') == 41))
                 type_effects = or_(*type_effects)
-                query = session.query(SpellsNewReference.id). \
-                    filter(SpellsNewReference.effectid1 == 413). \
-                    filter(SpellsNewReference.effect_base_value1 > 0). \
+                query = session.query(SpellsNew.id). \
+                    filter(SpellsNew.effectid1 == 413). \
+                    filter(SpellsNew.effect_base_value1 > 0). \
                     filter(type_effects). \
-                    order_by(SpellsNewReference.id)
+                    order_by(SpellsNew.id)
                 ids = query.all()
                 for entry in ids:
                     ret_ids.append(entry[0])
@@ -1251,7 +2840,9 @@ def get_map_poi(short_name):
 
 
 def parse_skill(skill_num):
-    if skill_num == 0:
+    if skill_num == -1:
+        return 'All Skills'
+    elif skill_num == 0:
         return '1H Blunt'
     elif skill_num == 1:
         return '1H Slashing'
@@ -1559,6 +3150,8 @@ def lookup_zone_name(item_id):
         return 'Quest'
     if item_id == -2:
         return 'Tradeskill'
+    if item_id == -3:
+        return 'Special Drop'
     zone_id = int(int(item_id) / 1000)
     with open(os.path.join(here, 'item_files/zonelist.txt'), 'r') as fh:
         zone_list = fh.read()
@@ -1568,14 +3161,74 @@ def lookup_zone_name(item_id):
 
 
 def check_sympathetic(name):
-    if 'Sympathetic Strike' in name:
+    if 'Sympathetic Strike of Flames' in name:
         split_name = name.split('of Flames')
         return f'{split_name[0]}{split_name[1]}'
-    elif 'Sympathetic Healing' in name:
+    elif 'Sympathetic Healing Burst' in name:
         split_name = name.split('Burst')
         return f'{split_name[0]}{split_name[1]}'
     else:
         return name
+
+
+def get_all_eras():
+    all_era = {'Classic': 'Classic',
+               'Kunark': 'Ruins of Kunark',
+               'Velious': 'Scars of Velious',
+               'Luclin': 'Shadows of Luclin',
+               'Planes': 'Planes of Power',
+               'LDoN': 'Lost Dungeons of Norrath',
+               'GoD': 'Gates of Discord',
+               'OoW': 'Omens of War',
+               'DoN': 'Dragons of Norrath',
+               'DoDH': 'Depths of Darkhollow',
+               'PoR': 'Prophecy of Ro',
+               'TSS': "The Serpent's Spine",
+               'TBS': 'The Buried Sea',
+               'SoF': 'Secrets of Faydwer',
+               'SoD': 'Seeds of Destruction',
+               'UF': 'Underfoot',
+               'HoT': 'House of Thule',
+               'VoA': 'Veil of Alaris',
+               'RoF': 'Rain of Fear'}
+    if expansion < 19:
+        del all_era['RoF']
+    if expansion < 18:
+        del all_era['VoA']
+    if expansion < 17:
+        del all_era['HoT']
+    if expansion < 16:
+        del all_era['UF']
+    if expansion < 15:
+        del all_era['SoD']
+    if expansion < 14:
+        del all_era['SoF']
+    if expansion < 13:
+        del all_era['TBS']
+    if expansion < 12:
+        del all_era['TSS']
+    if expansion < 11:
+        del all_era['PoR']
+    if expansion < 10:
+        del all_era['DoDH']
+    if expansion < 9:
+        del all_era['DoN']
+    if expansion < 8:
+        del all_era['OoW']
+    if expansion < 7:
+        del all_era['GoD']
+    if expansion < 6:
+        del all_era['LDoN']
+    if expansion < 4:
+        del all_era['Planes']
+    if expansion < 3:
+        del all_era['Luclin']
+    if expansion < 2:
+        del all_era['Velious']
+    if expansion < 1:
+        del all_era['Kunark']
+
+    return all_era
 
 
 def get_era_name(era_id):
@@ -1692,3 +3345,153 @@ def get_era_id(name):
         return 999
     else:
         raise Exception(f'Unknown era name {name}')
+
+
+def get_exclusion_list(name):
+    with open(os.path.join(here, 'Exclusion', f'{name}.txt')) as fh:
+        data = fh.read()
+    return data.split('\n')
+
+
+def get_stat_name(stat):
+    if stat == 'hp':
+        return 'Hit Points'
+    elif stat == 'mana':
+        return 'Mana'
+    elif stat == 'endur':
+        return 'Endurance'
+    elif stat == 'ac':
+        return 'Armor Class'
+    elif stat == 'aagi':
+        return 'Agility'
+    elif stat == 'acha':
+        return 'Charisma'
+    elif stat == 'adex':
+        return 'Dexterity'
+    elif stat == 'aint':
+        return 'Intelligence'
+    elif stat == 'asta':
+        return 'Stamina'
+    elif stat == 'astr':
+        return 'Strength'
+    elif stat == 'awis':
+        return 'Wisdom'
+    elif stat == 'heroic_agi':
+        return 'Heroic Agility'
+    elif stat == 'heroic_cha':
+        return 'Heroic Charisma'
+    elif stat == 'heroic_dex':
+        return 'Heroic Dexterity'
+    elif stat == 'heroic_int':
+        return 'Heroic Intelligence'
+    elif stat == 'heroic_sta':
+        return 'Heroic Stamina'
+    elif stat == 'heroic_str':
+        return 'Heroic Strength'
+    elif stat == 'heroic_wis':
+        return 'Heroic Wisdom'
+    elif stat == 'cr':
+        return 'Resist Cold'
+    elif stat == 'dr':
+        return 'Disease Resist'
+    elif stat == 'fr':
+        return 'Fire Resist'
+    elif stat == 'mr':
+        return 'Magic Resist'
+    elif stat == 'pr':
+        return 'Poison Resist'
+    elif stat == 'attack':
+        return 'Attack'
+    elif stat == 'haste':
+        return 'Haste'
+    elif stat == 'regen':
+        return 'HP Regeneration'
+    elif stat == 'manaregen':
+        return 'Mana Regeneration'
+    elif stat == 'enduranceregen':
+        return 'Endurance Regeneration'
+    elif stat == 'healamt':
+        return 'Healing Amount'
+    elif stat == 'spelldmg':
+        return 'Spell Damage'
+    elif stat == 'accuracy':
+        return 'Accuracy'
+    elif stat == 'avoidance':
+        return 'Avoidance'
+    elif stat == 'combateffects':
+        return 'Combat Effects'
+    elif stat == 'damageshield':
+        return 'Damage Shielding'
+    elif stat == 'dotshielding':
+        return 'DoT Shield'
+    elif stat == 'shielding':
+        return 'Shielding'
+    elif stat == 'spellshield':
+        return 'Spellshield'
+    elif stat == 'strikethrough':
+        return 'Strikethrough'
+    elif stat == 'stunresist':
+        return 'Stun Resist'
+    else:
+        return 'None'
+
+
+def get_stats_of_interest():
+    return [
+        'aagi', 'ac', 'accuracy', 'acha', 'adex', 'aint', 'asta', 'astr', 'attack',
+        'avoidance', 'awis', 'combateffects', 'cr', 'damageshield', 'dotshielding',
+        'dr', 'endur', 'focuseffect', 'fr', 'hp', 'regen', 'mana', 'manaregen',
+        'enduranceregen', 'mr', 'pr', 'shielding', 'clickeffect', 'spellshield',
+        'strikethrough', 'stunresist', 'proceffect', 'worneffect', 'focustype',
+        'dsmitigation', 'heroic_str', 'heroic_int', 'heroic_wis', 'heroic_agi',
+        'heroic_dex', 'heroic_sta', 'heroic_cha', 'heroic_pr', 'heroic_dr',
+        'heroic_fr', 'heroic_cr', 'heroic_mr', 'healamt', 'spelldmg', 'bardeffect'
+    ]
+
+
+def get_stat_translations():
+    return {'aagi': 'Agility',
+            'ac': 'AC',
+            'accuracy': 'Accuracy',
+            'acha': 'Charisma',
+            'adex': 'Dexterity',
+            'aint': 'Intelligence',
+            'asta': 'Stamina',
+            'astr': 'Strength',
+            'avoidance': 'Avoidance',
+            'awis': 'Wisdom',
+            'combateffects': 'Combat Effects',
+            'cr': 'Cold Resist',
+            'damageshield': 'Damage Shielding',
+            'dotshielding': 'DoT Shielding',
+            'dr': 'Disease Resist',
+            'endur': 'Endurance',
+            'fr': 'Fire Resist',
+            'hp': 'HP',
+            'regen': 'HP Regeneration',
+            'mana': 'Mana',
+            'manaregen': 'Mana Regeneration',
+            'enduranceregen': 'Endurance Regeneration',
+            'mr': 'Magic Resist',
+            'pr': 'Poison Resist',
+            'shielding': 'Shielding',
+            'spellshield': 'Spell Shielding',
+            'strikethrough': 'Strikethrough',
+            'stunresist': 'Stun Resist',
+            'dsmitigation': 'Damage Shield Mitigation',
+            'heroic_str': 'Heroic Strength',
+            'heroic_int': 'Heroic Intelligence',
+            'heroic_wis': 'Heroic Wisdom',
+            'heroic_agi': 'Heroic Agility',
+            'heroic_dex': 'Heroic Dexterity',
+            'heroic_sta': 'Heroic Stamina',
+            'heroic_cha': 'Heroic Charisma',
+            'heroic_pr': 'Heroic Poison Resist',
+            'heroic_dr': 'Heroic Disease Resist',
+            'heroic_fr': 'Heroic Fire Resist',
+            'heroic_cr': 'Heroic Cold Resist',
+            'heroic_mr': 'Heroic Magic Resist',
+            'healamt': 'Healing Amount',
+            'spelldmg': 'Spell Damage',
+            'attack': 'Attack'
+            }

@@ -3,21 +3,21 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 import utils
-from logic import SpellsNewReference, SpellsNew, engine, Pets, NPCTypes, NPCSpells, NPCSpellsEntries
+from logic import SpellsNew, SpellsNew, engine, Pets, NPCTypes, NPCSpells, NPCSpellsEntries
 
 
 def get_all_class_pets(class_id):
-    spas = [SpellsNewReference.effectid1 == 33, SpellsNewReference.effectid1 == 71, SpellsNewReference.effectid1 == 106]
+    spas = [SpellsNew.effectid1 == 33, SpellsNew.effectid1 == 71, SpellsNew.effectid1 == 106]
     spa_param = or_(*spas)
     class_name = utils.get_spell_class(class_id)
     with Session(bind=engine) as session:
-        query = session.query(SpellsNewReference.id, SpellsNewReference.name,
-                              SpellsNewReference.teleport_zone, SpellsNewReference.new_icon,
+        query = session.query(SpellsNew.id, SpellsNew.name,
+                              SpellsNew.teleport_zone, SpellsNew.new_icon,
                               NPCTypes.race, NPCTypes.level, getattr(NPCTypes, 'class'), NPCTypes.hp, NPCTypes.AC,
-                              NPCTypes.mindmg, NPCTypes.maxdmg, getattr(SpellsNewReference, f'classes{class_id}')).\
+                              NPCTypes.mindmg, NPCTypes.maxdmg, getattr(SpellsNew, f'classes{class_id}')).\
             filter(spa_param).\
-            filter(getattr(SpellsNewReference, f'classes{class_id}') <= 65).\
-            filter(SpellsNewReference.teleport_zone == Pets.type).\
+            filter(getattr(SpellsNew, f'classes{class_id}') <= 65).\
+            filter(SpellsNew.teleport_zone == Pets.type).\
             filter(NPCTypes.id == Pets.npcID)
         result = query.all()
     data = []
@@ -91,10 +91,10 @@ def get_pet_data(pet_spell_name, include_base=True):
     spells = []
     with Session(bind=engine) as session:
         # Get proc spell
-        query = session.query(NPCSpells.attack_proc, SpellsNewReference.name,
-                              NPCSpells.proc_chance, SpellsNewReference.new_icon).\
+        query = session.query(NPCSpells.attack_proc, SpellsNew.name,
+                              NPCSpells.proc_chance, SpellsNew.new_icon).\
             filter(NPCSpells.id == npc_data['npc_spells_id']).\
-            filter(NPCSpells.attack_proc == SpellsNewReference.id)
+            filter(NPCSpells.attack_proc == SpellsNew.id)
         result = query.first()
         if result:
             spells.append({'spell_type': 'proc',
@@ -103,10 +103,10 @@ def get_pet_data(pet_spell_name, include_base=True):
                            'proc_chance': result[2],
                            'icon': result[3]})
         # Get defensive proc spell
-        query = session.query(NPCSpells.defensive_proc, SpellsNewReference.name,
-                              NPCSpells.dproc_chance, SpellsNewReference.new_icon).\
+        query = session.query(NPCSpells.defensive_proc, SpellsNew.name,
+                              NPCSpells.dproc_chance, SpellsNew.new_icon).\
             filter(NPCSpells.id == npc_data['npc_spells_id']).\
-            filter(NPCSpells.defensive_proc == SpellsNewReference.id)
+            filter(NPCSpells.defensive_proc == SpellsNew.id)
         result = query.first()
         if result:
             spells.append({'spell_type': 'defensive',
@@ -115,10 +115,10 @@ def get_pet_data(pet_spell_name, include_base=True):
                            'proc_chance': result[2],
                            'icon': result[3]})
         # Get ranged proc spell
-        query = session.query(NPCSpells.range_proc, SpellsNewReference.name,
-                              NPCSpells.rproc_chance, SpellsNewReference.new_icon).\
+        query = session.query(NPCSpells.range_proc, SpellsNew.name,
+                              NPCSpells.rproc_chance, SpellsNew.new_icon).\
             filter(NPCSpells.id == npc_data['npc_spells_id']).\
-            filter(NPCSpells.range_proc == SpellsNewReference.id)
+            filter(NPCSpells.range_proc == SpellsNew.id)
         result = query.first()
         if result:
             spells.append({'spell_type': 'ranged',
@@ -128,9 +128,9 @@ def get_pet_data(pet_spell_name, include_base=True):
                            'icon': result[3]})
 
         # Get all cast spells
-        query = session.query(NPCSpellsEntries.spellid, SpellsNewReference.name, SpellsNewReference.new_icon).\
+        query = session.query(NPCSpellsEntries.spellid, SpellsNew.name, SpellsNew.new_icon).\
             filter(NPCSpellsEntries.npc_spells_id == npc_data['npc_spells_id']).\
-            filter(NPCSpellsEntries.spellid == SpellsNewReference.id)
+            filter(NPCSpellsEntries.spellid == SpellsNew.id)
         result = query.all()
         for entry in result:
             spells.append({'spell_type': 'cast',

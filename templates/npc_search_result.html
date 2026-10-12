@@ -10,7 +10,7 @@
     </thead>
     {% for entry in data|sort(attribute='name') %}
     <tr>
-        <td><a href="{{url_for('npc_detail', npc_id=entry.npc_id)}}">{{entry.name}}</a></td>
+        <td><a href="{{url_for('npcs.npc_detail', npc_id=entry.npc_id)}}">{{entry.name}}</a></td>
         <td>{{entry.zone}}</td>
         <td>{{entry.level}}</td>
         <td>{{entry.hp}}</td>

@@ -22,6 +22,6 @@ $(document).ready(function() {
 </script>
 <h3>Search Results:</h3>
 {% for entry in data|sort(attribute='name') %}
-<div class="icon-container" style="display: flex;"><span class="item-icon" style='background-image:url(/static/item_icons/item_{{entry.icon}}.png);background-position:-200px -40px;display:inline-block;height:40px;width:40px;' title='Icon {{entry.icon}}'></span><a href="{{url_for('item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.name}}</a></div>
+<div class="icon-container" style="display: flex;"><span class="item-icon" style='background-image:url(/static/item_icons/item_{{entry.icon}}.png);background-position:-200px -40px;display:inline-block;height:40px;width:40px;' title='Icon {{entry.icon}}'></span><a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.name}}</a></div>
 {% endfor %}
 {% endblock %}

@@ -1,8 +1,11 @@
 {% extends "layout.html" %}
-{% block body %}
 {% if data is none %}
 <h3>Faction data not found or does not exist</h3>
 {% elif data %}
+{% block title %}
+EQDB :: Faction :: {{data.name}}
+{% endblock %}
+{% block body %}
 <center><h1>{{data.name}}</h1></center>
 <div style="display: flex; justify-content: center;">
 <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" id="positive">
@@ -16,7 +19,7 @@
     {% for zone_name in data.positive %}
           {% for entry in data.positive[zone_name] %}
           <tr>
-          <td><a href="{{url_for('npc_detail', npc_id=entry.npc_id)}}">{{entry.npc_name}}</a></td>
+          <td><a href="{{url_for('npcs.npc_detail', npc_id=entry.npc_id)}}">{{entry.npc_name}}</a></td>
             <td>{{zone_name}}</td>
             <td>+{{entry.value}}</td>
           </tr>
@@ -35,7 +38,7 @@
     {% for zone_name in data.positive %}
           {% for entry in data.negative[zone_name] %}
           <tr>
-          <td><a href="{{url_for('npc_detail', npc_id=entry.npc_id)}}">{{entry.npc_name}}</a></td>
+          <td><a href="{{url_for('npcs.npc_detail', npc_id=entry.npc_id)}}">{{entry.npc_name}}</a></td>
             <td>{{zone_name}}</td>
             <td>{{entry.value}}</td>
           </tr>
@@ -44,9 +47,5 @@
     </table>
 </div>
 </div>
-{% else %}
-<center><h2>KOS and Deepwater Knights</h2></center>
-There are too many entires in the KOS faction to make any sense showing.  There are no NPCs you can kill to raise this Faction.<br>
-The deepwater knights _are_ a real faction which you might want to raise your faction with, unfortunately they're also the "default" faction and thus have way too many entries to show.<br>
-{% endif %}
 {% endblock %}
+{% endif %}

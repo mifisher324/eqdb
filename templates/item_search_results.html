@@ -83,13 +83,13 @@
     {% endif %}
     <th>Zone</th>
     <th>Source</th>
-    {% if show_dmg_delay and full_detail%}
+    {% if show_dmg_delay%}
       <th>Dmg</th>
     {% endif %}
-    {% if show_dmg_delay and full_detail%}
+    {% if show_dmg_delay%}
       <th>Delay</th>
     {% endif %}
-    {% if show_dmg_delay and full_detail%}
+    {% if show_dmg_delay%}
       <th>Eff.</th>
     {% endif %}
     {% if reduce.ac and full_detail %}
@@ -200,22 +200,25 @@
     {% if show_proc %}
     <th>Proc Name</th>
     {% endif %}
+    {% if show_proc_max_dmg %}
+    <th>Proc Damage</th>
+    {% endif %}
     </thead>
 {% for entry in data %}
     <tr>
-        <td><img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('item_detail', item_id=entry.id)}}" data-url="{{entry.id}}" class="tooltip-link">{{entry.Name}}</a></td>
+        <td><img src="/static/item_icons/item_{{entry.icon}}.png">  <a href="{{url_for('items.item_detail', item_id=entry.id)}}" data-url="{{entry.id}}" class="tooltip-link">{{entry.Name}}</a></td>
         {% if show_values %}
          <td>{{'%0.2f' % entry.weight|float}}</td>
         {% endif %}
         <td>{{entry.zone_name}}</td>
         <td>{{entry.npc_name}}</td>
-        {% if show_dmg_delay and full_detail %}
+        {% if show_dmg_delay %}
             <td>{{entry.damage}}</td>
         {% endif %}
-        {% if show_dmg_delay and full_detail %}
+        {% if show_dmg_delay %}
             <td>{{entry.delay}}</td>
         {% endif %}
-        {% if show_dmg_delay and full_detail %}
+        {% if show_dmg_delay %}
             <td>{{entry.w_eff}}</td>
         {% endif %}
         {% if reduce.ac and full_detail %}
@@ -392,6 +395,9 @@
         {% endif %}
         {% if show_proc %}
         <td><a href="/spell/detail/{{entry.proc_id}}" data-url="{{entry.proc_id}}" class="spell-tooltip-link">{{entry.proc_name}}</a></td>
+        {% endif %}
+        {% if show_proc_max_dmg %}
+        <td>{{entry.proc_max_damage | abs}}</td>
         {% endif %}
     </tr>
 {% endfor %}

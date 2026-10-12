@@ -6,6 +6,8 @@ import utils
 from logic import Zone, engine, Spawn2, SpawnEntry, SpawnGroup, NPCTypes, Item, expansion, \
     ZonePoints, LootTableEntries, LootDropEntries
 
+from logic import expansion
+
 
 def _get_link_filters():
     """Helper to return the basic link filters between zone, npc, and item"""
@@ -16,14 +18,15 @@ def _get_link_filters():
 
 def get_zone_listing():
     era_list = {'Classic': 0, 'Ruins of Kunark': 1, 'Legacy of Ykesha': 5, 'Scars of Velious': 2, 'Shadows of Luclin': 3,
-                #'Planes of Power': 4, 'Lost Dungeons of Norrath': 6, 'Gates of Discord': 7}
-                'Planes of Power': 4}
+                'Planes of Power': 4, 'Lost Dungeons of Norrath': 6, 'Gates of Discord': 7}
     out_list = {}
     exclusion_list = ['cshome', 'hateplane', 'powar', 'soldungc', 'qvicb']
     # Massaging
     massage_list = {'nedaria': 7, 'bazaar': 3}
     add_to_later = {0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {}}
     for era in era_list:
+        if era_list[era] > expansion:
+            continue
         with Session(bind=engine) as session:
             query = session.query(Zone.zoneidnumber, Zone.short_name, Zone.long_name, Zone.zone_exp_multiplier). \
                 filter(Zone.expansion == era_list[era])
@@ -31,6 +34,9 @@ def get_zone_listing():
         era_zones = {}
         for entry in result:
             id_num = entry[0]
+            excl_list = utils.get_exclusion_list('zone')
+            if id_num in excl_list:
+                continue
             short_name = entry[1]
             long_name = entry[2]
             zem = entry[3]
@@ -54,11 +60,14 @@ def get_zone_listing():
 def get_zone_long_name(zone_short_name):
     with Session(bind=engine) as session:
         query = session.query(Zone.zoneidnumber, Zone.long_name).filter(Zone.short_name == zone_short_name)
-        result = query.one()
+        result = query.first()
     return result[0], result[1]
 
 
 def get_zone_detail(zone_id):
+    excl_list = utils.get_exclusion_list('zone')
+    if zone_id in excl_list:
+        return None
     # Get some zone details
     with Session(bind=engine) as session:
         args = [Zone.expansion, Zone.short_name, Zone.long_name, Zone.safe_x, Zone.safe_y, Zone.canbind, Zone.canlevitate,
@@ -125,7 +134,21 @@ def get_zone_detail(zone_id):
 
     # Get all the NPCs for this zone
     spawn_groups = {}
+    npc_list = []
     with Session(bind=engine) as session:
+        query = session.query(NPCTypes.id, NPCTypes.name, NPCTypes.hp, NPCTypes.race, NPCTypes.level).\
+            filter(NPCTypes.id.like(f'{zone_id}___'))
+        result = query.all()
+        for entry in result:
+            npc_id = entry[0]
+            npc_name = entry[1]
+            npc_hp = entry[2]
+            npc_race = utils.get_bane_dmg_race(entry[3])
+            npc_level = entry[4]
+            npc_list.append({'id': npc_id, 'name': utils.fix_npc_name(npc_name), 'hp': npc_hp, 'race': npc_race,
+                             'level': npc_level})
+
+        base_data['npcs'] = npc_list
         query = session.query(Spawn2.x, Spawn2.y, Spawn2.z, Spawn2.respawntime, SpawnGroup.name, NPCTypes.name,
                               NPCTypes.id, SpawnEntry.chance, Spawn2.id, Spawn2.spawngroupID).\
             filter(Spawn2.spawngroupID == SpawnGroup.id).\
@@ -156,7 +179,7 @@ def get_zone_detail(zone_id):
             spawn_groups.update({name: {'x': x,
                                         'y': y,
                                         'z': z,
-                                        'respawn': respawn,
+                                        'respawn': utils.convert_time(respawn),
                                         'npcs': npc_list,
                                         'spawn_id': spawn_id,
                                         'group_id': group_id}})
@@ -178,6 +201,9 @@ def get_zone(name):
 
     out_zones = []
     for entry in result:
+        excl_list = utils.get_exclusion_list('zone')
+        if entry[0] in excl_list:
+            return None
         out_zones.append({'zone_id': entry[0],
                           'zone_name': entry[1]})
     return out_zones

@@ -1,9 +1,12 @@
 {% extends "layout.html" %}
-{% block body %}
-<center><h3>{{data.pet_name}}</h3></center>
 {% if data is none %}
 <h3>Pet Data Not Found</h3>
 {% else %}
+<center><h3>{{data.pet_name}}</h3></center>
+{% block title %}
+EQDB :: Pet :: {{data.pet_name}}
+{% endblock %}
+{% block body %}
 <div style="display: flex; justify-content: center;">
 <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="pet">
     <center><h3>Pet Stats</h3></center>
@@ -109,7 +112,7 @@
             {% for entry in data.spells %}
             <tr>
                 <td><img src="/static/spell_icons/{{entry.icon}}.png"></td>
-                <td><a href="{{url_for('spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.spell_name}}</a></td>
+                <td><a href="{{url_for('spells.spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.spell_name}}</a></td>
                 <td>{{entry.spell_type}}</td>
                 {% if entry.proc_chance is not none %}
                 <td>{{entry.proc_chance}}%</td>
@@ -121,5 +124,5 @@
 
 {% endif %}
     </div>
-{% endif %}
 {% endblock %}
+{% endif %}

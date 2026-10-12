@@ -21,8 +21,8 @@
     <tr style="border: 1px solid black; border-collapse: collapse;">
         <td style="border: 1px solid black; border-collapse: collapse;">{{entry.level}}</td>
         <td style="border: 1px solid black; border-collapse: collapse;"><img src="/static/spell_icons/{{entry.icon}}.png"></td>
-        <td style="border: 1px solid black; border-collapse: collapse;"><a href="{{url_for('spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.spell_name}}</a></td>
-        <td style="border: 1px solid black; border-collapse: collapse;"><a href="{{url_for('pet_detail', pet_sum_name=entry.pet_name)}}">{{entry.pet_name}}</a></td>
+        <td style="border: 1px solid black; border-collapse: collapse;"><a href="{{url_for('spells.spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.spell_name}}</a></td>
+        <td style="border: 1px solid black; border-collapse: collapse;"><a href="{{url_for('pets.pet_detail', pet_sum_name=entry.pet_name)}}">{{entry.pet_name}}</a></td>
         <td style="border: 1px solid black; border-collapse: collapse;">{{entry.race}}</td>
         <td style="border: 1px solid black; border-collapse: collapse;">{{entry.pet_level}}</td>
         <td style="border: 1px solid black; border-collapse: collapse;">{{entry.class}}</td>

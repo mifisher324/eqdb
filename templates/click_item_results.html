@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block body %}
+<center><h3>Click Effect Items</h3></center>
+<table class="mediumfont table table-bordered">
+    <thead>
+        <th>Item Name</th>
+        <th>Zone</th>
+        <th>Source</th>
+        <th>Spell</th>
+        <th>Click Effect(s)</th>
+    </thead>
+    {% for entry in data %}
+        <tr>
+            <td><a href="{{url_for('items.item_detail', item_id=entry.item_id)}}" data-url="{{entry.item_id}}" class="tooltip-link">{{entry.item_name}}</a></td>
+            {% if entry.zone_id < 1 %}
+                <td>{{entry.zone_name}}</td>
+                <td>{{entry.npc_name}}</td>
+            {% else %}
+                <td><a href="{{url_for('zones.zone_detail', zone_id=entry.zone_id)}}">{{entry.zone_name}}</a></td>
+                <td><a href="{{url_for('npcs.npc_detail', npc_id=entry.npc_id)}}">{{entry.npc_name}}</a></td>
+            {% endif %}
+            <td><a href="{{url_for('spells.spell_detail', spell_id=entry.spell_id)}}" data-url="{{entry.spell_id}}" class="spell-tooltip-link">{{entry.spell_name}}</a></td>
+            <td>{% for sub_entry in entry.effects %}
+                  {% if entry.effects[sub_entry]["desc"] is not none %}
+                   {{sub_entry.replace('_', ' ')}}: {{entry.effects[sub_entry]['desc']|safe}}<br>
+                  {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

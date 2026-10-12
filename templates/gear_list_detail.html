@@ -1,0 +1,123 @@
+<!-- NOTE: THIS FEATURE IS CURRENTLY DARK AS IT IS BEING CONSIDERED ON WHETHER IT IS APPROPRIATE FOR EQDB OR NOT -->
+
+{% extends "layout.html" %}
+{% block body %}
+<script>
+window.onload = doStuff;
+
+function doStuff() {
+    var form = document.getElementById("demoForm");
+    form.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent default form submission
+            form.submit(); // Manually submit the form
+        }
+    });
+}
+</script>
+<script>
+$(document).ready(function() {
+
+    $('textarea').keypress(function(event) {
+
+        if (event.keyCode == 13) {
+            event.preventDefault();
+        }
+    });
+});
+</script>
+<div style="display: flex; justify-content: center;">
+<div class="border bg-body-tertiary p-3 mb-4 d-inline-block" style="margin-right: 25px;" id="items">
+<center><h3>Gear List: {{data.set_name}}</h3></center>
+{% if not data.item_data %}
+  No items currently in gear list!  Use gear search or item detail pages to add them!
+{% else %}
+<ul>
+{% for entry in ['Arms', 'Back', 'Chest', 'Charm', 'Ear 1', 'Ear 2', 'Face', 'Feet', 'Finger 1', 'Finger 2', 'Hands'
+                 'Head', 'Legs', 'Neck', 'Primary', 'Range', 'Ammo', 'Secondary', 'Shoulder', 'Waist', 'Wrist 1', 'Wrist 2'] %}
+  {% if entry in data.slot_data %}
+    <li>{{entry}}: <a href="{{url_for('item_detail', item_id=data.slot_data[entry])}}" data-url="{{data.slot_data[entry]}}" class="tooltip-link">{{data.item_data[data.slot_data[entry]]}}</a></li>
+      <ul>
+        {% if (entry + '_slot 1') in data.slot_data %}
+          <li>{{entry}} Aug Slot 1: <a href="{{url_for('item_detail', item_id=data.slot_data[entry ~ '_slot 1'])}}" data-url="{{data.slot_data[entry ~ '_slot 1']}}" class="tooltip-link">{{data.item_data[data.slot_data[entry ~ '_slot 1']]}}</a></li>
+        {% else %}
+          <li>{{entry}} Aug Slot 1: <i>Empty</i></li>
+        {% endif %}
+        {% if (entry + '_slot 2') in data.slot_data %}
+          <li>{{entry}} Aug Slot 2: <a href="{{url_for('item_detail', item_id=data.slot_data[entry ~ '_slot 2'])}}" data-url="{{data.slot_data[entry ~ '_slot 2']}}" class="tooltip-link">{{data.item_data[data.slot_data[entry ~ '_slot 2']]}}</a></li>
+        {% else %}
+          <li>{{entry}} Aug Slot 2: <i>Empty</i></li>
+        {% endif %}
+      </ul>
+  {% else %}
+    <li>{{entry}}: <i>Empty!</i></li>
+  {% endif %}
+{% endfor %}
+</ul>
+</div></div>
+<center><h4>Stats from Items</h4></center>
+<div style="display: flex; justify-content: center;">
+  <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" id="basicstats">
+    <h5>Basic Stats</h5>
+    <table>
+    {% for entry in ['hp', 'mana', 'endur', 'aagi', 'acha', 'adex', 'aint', 'asta', 'astr', 'awis', 'cr', 'fr', 'dr', 'pr', 'mr'] %}
+      {% if data.stats[entry] %}
+      <tr>
+        <td><b>{{data.stat_lookup[entry]}}</b></td>
+        <td>+{{data.stats[entry]}}</td>
+      </tr>
+      {% endif %}
+    {% endfor %}
+    </table>
+  </div>
+  <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" id="heroicstats">
+    <h5>Heroic Stats</h5>
+    <table>
+      {% for entry in ['heroic_agi', 'heroic_cha', 'heroic_dex', 'heroic_int', 'heroic_sta', 'heroic_str', 'heroic_wis', 'heroic_cr', 'heroic_fr', 'heroic_dr', 'heroic_pr', 'heroic_mr'] %}
+      {% if data.stats[entry] %}
+      <tr>
+        <td><b>{{data.stat_lookup[entry]}}</b></td>
+        <td>+{{data.stats[entry]}}</td>
+      </tr>
+      {% endif %}
+    {% endfor %}
+    </table>
+  </div>
+  <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" id="modifiers">
+    <h5>Modifiers</h5>
+    <table>
+      {% for entry in ['haste', 'regen', 'manaregen', 'enduranceregen', 'healamt', 'spelldmg', 'attack'] %}
+      {% if data.stats[entry] %}
+      <tr>
+        <td><b>{{data.stat_lookup[entry]}}</b></td>
+        <td>+{{data.stats[entry]}}</td>
+      </tr>
+      {% endif %}
+    {% endfor %}
+    </table>
+  </div>
+  <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" id="mod2s">
+    <h5>Mod 2s</h5>
+    <table>
+      {% for entry in ['accuracy', 'avoidance', 'combateffects', 'damageshield', 'dotshielding', 'shielding', 'spellshield', 'strikethrough', 'stunresist', 'dsmitigation'] %}
+      {% if data.stats[entry] %}
+      <tr>
+        <td><b>{{data.stat_lookup[entry]}}</b></td>
+        <td>+{{data.stats[entry]}}</td>
+      </tr>
+      {% endif %}
+    {% endfor %}
+    </table>
+  </div>
+  <div class="border bg-body-tertiary p-3 mb-4 d-inline-block" id="focus">
+    <h5>Spell Effects</h5>
+    <ul>
+      {% for entry in data.spell_data %}
+        <li><a href="{{url_for('spell_detail', spell_id=entry)}}">{{data.spell_data[entry]}}</a></li>
+      {% endfor %}
+    </ul>
+
+  </div>
+</div>
+{% endif %}
+{% endblock %}

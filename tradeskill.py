@@ -6,6 +6,9 @@ from logic import TradeskillRecipe, engine, TradeskillRecipeEntries, Item, expan
 
 
 def get_tradeskill_detail(ts_id):
+    excl_list = utils.get_exclusion_list('tradeskill')
+    if ts_id in excl_list:
+        return None
     # Get the tradeskill base details
     base_data = {}
     with Session(bind=engine) as session:
@@ -109,7 +112,56 @@ def get_tradeskills(name=None, trivial=None, tradeskill=None, remove_no_fail=Fal
 
     out_data = []
     for entry in result:
+        excl_list = utils.get_exclusion_list('tradeskill')
+        if entry[0] in excl_list:
+            continue
         out_data.append({'ts_id': entry[0],
                          'ts_name': entry[1],
                          'trivial': entry[2]})
     return out_data
+
+
+def get_tradeskill_json(ts_id=None, ts_name=None):
+    excl_list = utils.get_exclusion_list('tradeskill')
+    if ts_id in excl_list:
+        return []
+    with Session(bind=engine) as session:
+        if ts_id:
+            query = session.query(TradeskillRecipe).filter(TradeskillRecipe.id == ts_id)
+            result = query.one()
+            if not result:
+                return {}
+            ret_dict = result.__dict__
+            ret_dict.pop('_sa_instance_state')
+            query = session.query(TradeskillRecipeEntries).filter(TradeskillRecipeEntries.recipe_id == ts_id)
+            result = query.all()
+            entries = []
+            for entry in result:
+                entry = entry.__dict__
+                entry.pop('_sa_instance_state')
+                entries.append(entry)
+            ret_dict.update({'tradeskill_entries': entries})
+            return ret_dict
+        else:
+            query = session.query(TradeskillRecipe).filter(TradeskillRecipe.name.like('%%%s%%' % ts_name))
+            result = query.limit(50).all()
+            if not result:
+                return {}
+            ret_list = []
+            for entry in result:
+                entry = entry.__dict__
+                entry.pop('_sa_instance_state')
+                if entry['id'] in excl_list:
+                    continue
+                ret_dict = entry
+                query = session.query(TradeskillRecipeEntries).\
+                    filter(TradeskillRecipeEntries.recipe_id == ret_dict['id'])
+                sub_result = query.all()
+                entries = []
+                for sub_entry in sub_result:
+                    sub_entry = sub_entry.__dict__
+                    sub_entry.pop('_sa_instance_state')
+                    entries.append(sub_entry)
+                ret_dict.update({'tradeskill_entries': entries})
+                ret_list.append(ret_dict)
+            return ret_list

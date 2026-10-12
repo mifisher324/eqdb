@@ -1,8 +1,26 @@
 {% extends "layout.html" %}
 {% block body %}
-<h1><center>EQDB - Improved Heroes Journey Database Searching</center></h1>
-<img style="width: 100%;" src="/static/banner3-Logo.png">
-<center>
+<script>
+window.onload = doStuff;
+
+function doStuff() {
+    var form = document.getElementById("demoForm");
+    form.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent default form submission
+            form.submit(); // Manually submit the form
+        }
+    });
+}
+</script>
+<h1><center>EQDB - EMU Database Search</center></h1><br>
+<form action="{{ url_for('all_search') }}" method="post" class="add-entry" id="demoForm">
+<center>                <textarea rows="1" class="nameentry" name="all_names"
+                                           onKeyPress="return checkSubmit(event)"></textarea>
+<input type="submit" value="Search"><br></center>
+                </form>
+
+<center><br>
 <a href="/search/spell">Search Spells</a> --
 <a href="/item/search">Search Items</a> --
 <a href="/zone/listing">Zone Listing</a> --
@@ -12,6 +30,5 @@
 <br>
 <a href="/search/armor">Advanced Gear Search: Armor</a> --
 <a href="/search/weapon">Advanced Gear Search: Weapons</a> --
-<a href="/identify">(MINIGAME) Identify Unknown Items</a>
     </center>
 {% endblock %}

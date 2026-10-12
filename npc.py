@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 import utils
 from logic import engine, NPCTypes, FactionList, NPCFactionEntries, MerchantList, Item, expansion, NPCSpells, \
-    SpellsNewReference, NPCSpellsEntries, LootTableEntries, LootDrop, LootDropEntries, Spawn2, SpawnEntry, SpawnGroup, \
+    SpellsNew, NPCSpellsEntries, LootTableEntries, LootDrop, LootDropEntries, Spawn2, SpawnEntry, SpawnGroup, \
     Zone
 
 
@@ -17,18 +17,24 @@ def get_npcs(npc_name):
     out_data = []
     for entry in result:
         npc_id = entry[0]
+        excl_list = utils.get_exclusion_list('npcs')
+        if npc_id in excl_list:
+            continue
         npc_name = entry[1]
         zone_id = int(npc_id/1000)
         level = entry[2]
         hp = entry[3]
         with Session(bind=engine) as session:
-            query = session.query(Zone.long_name, Zone.expansion).filter(Zone.zoneidnumber == zone_id)
+            query = session.query(Zone.long_name, Zone.expansion, Zone.short_name).filter(Zone.zoneidnumber == zone_id)
             sub_result = query.first()
 
         if not sub_result:
             continue
 
         if int(sub_result[1]) > expansion:
+            continue
+
+        if sub_result[2] in ['cshome', 'hateplane', 'powar', 'soldungc', 'qvicb']:
             continue
 
         if not sub_result:
@@ -42,6 +48,9 @@ def get_npcs(npc_name):
 
 
 def get_npc_detail(npc_id):
+    excl_list = utils.get_exclusion_list('npcs')
+    if npc_id in excl_list:
+        return None
     # Get basic npc details:
     with Session(bind=engine) as session:
         query = session.query(NPCTypes).filter(NPCTypes.id == npc_id)
@@ -57,16 +66,19 @@ def get_npc_detail(npc_id):
     base_data['class'] = utils.get_class_string(base_data['class'])
     base_data['race'] = utils.get_bane_dmg_race(base_data['race'])
 
-    # Update the faction to the name
+    # Get faction changes for defeating this mob
+    factions = []
     with Session(bind=engine) as session:
-        query = session.query(FactionList.name, FactionList.id).\
+        query = session.query(FactionList.name, FactionList.id, NPCFactionEntries.value).\
             filter(NPCFactionEntries.npc_faction_id == base_data['npc_faction_id']).\
             filter(FactionList.id == NPCFactionEntries.faction_id)
-        sub_result = query.first()
+        sub_result = query.all()
     if sub_result:
-        base_data['faction'] = {'faction_name': sub_result[0], 'faction_id': sub_result[1]}
-    else:
-        base_data['faction'] = {}
+        for entry in sub_result:
+            if int(entry[2]) == 0:
+                continue
+            factions.append({'faction_name': entry[0], 'faction_id': entry[1], 'faction_amt': entry[2]})
+    base_data['faction'] = factions
 
     # Convert special abilities to make sense
     base_data.update({'special_attacks': utils.translate_specials(result.npcspecialattks)})
@@ -91,10 +103,10 @@ def get_npc_detail(npc_id):
         base_data['merch'] = merch
 
         # Get proc spell
-        query = session.query(NPCSpells.attack_proc, SpellsNewReference.name,
-                              NPCSpells.proc_chance, SpellsNewReference.new_icon).\
+        query = session.query(NPCSpells.attack_proc, SpellsNew.name,
+                              NPCSpells.proc_chance, SpellsNew.new_icon).\
             filter(NPCSpells.id == base_data['npc_spells_id']).\
-            filter(NPCSpells.attack_proc == SpellsNewReference.id)
+            filter(NPCSpells.attack_proc == SpellsNew.id)
         result = query.first()
         if result:
             spells.append({'spell_type': 'proc',
@@ -103,10 +115,10 @@ def get_npc_detail(npc_id):
                            'proc_chance': result[2],
                            'icon': result[3]})
         # Get defensive proc spell
-        query = session.query(NPCSpells.defensive_proc, SpellsNewReference.name,
-                              NPCSpells.dproc_chance, SpellsNewReference.new_icon).\
+        query = session.query(NPCSpells.defensive_proc, SpellsNew.name,
+                              NPCSpells.dproc_chance, SpellsNew.new_icon).\
             filter(NPCSpells.id == base_data['npc_spells_id']).\
-            filter(NPCSpells.defensive_proc == SpellsNewReference.id)
+            filter(NPCSpells.defensive_proc == SpellsNew.id)
         result = query.first()
         if result:
             spells.append({'spell_type': 'defensive',
@@ -115,10 +127,10 @@ def get_npc_detail(npc_id):
                            'proc_chance': result[2],
                            'icon': result[3]})
         # Get ranged proc spell
-        query = session.query(NPCSpells.range_proc, SpellsNewReference.name,
-                              NPCSpells.rproc_chance, SpellsNewReference.new_icon).\
+        query = session.query(NPCSpells.range_proc, SpellsNew.name,
+                              NPCSpells.rproc_chance, SpellsNew.new_icon).\
             filter(NPCSpells.id == base_data['npc_spells_id']).\
-            filter(NPCSpells.range_proc == SpellsNewReference.id)
+            filter(NPCSpells.range_proc == SpellsNew.id)
         result = query.first()
         if result:
             spells.append({'spell_type': 'ranged',
@@ -128,9 +140,9 @@ def get_npc_detail(npc_id):
                            'icon': result[3]})
 
         # Get all cast spells
-        query = session.query(NPCSpellsEntries.spellid, SpellsNewReference.name, SpellsNewReference.new_icon).\
+        query = session.query(NPCSpellsEntries.spellid, SpellsNew.name, SpellsNew.new_icon).\
             filter(NPCSpellsEntries.npc_spells_id == base_data['npc_spells_id']).\
-            filter(NPCSpellsEntries.spellid == SpellsNewReference.id)
+            filter(NPCSpellsEntries.spellid == SpellsNew.id)
         result = query.all()
         for entry in result:
             spells.append({'spell_type': 'cast',
@@ -193,7 +205,7 @@ def get_npc_detail(npc_id):
                                  'x': int(entry[0]) * -1,
                                  'y': int(entry[1]) * -1,
                                  'z': entry[2],
-                                 'respawn': entry[3],
+                                 'respawn': utils.convert_time(entry[3]),
                                  'spawn_npcs': spawn_npcs,
                                  'group_id': entry[5],
                                  'spawn_id': entry[6]})
@@ -230,11 +242,32 @@ def get_npc_detail(npc_id):
     return base_data
 
 
-def get_npc_raw_data(npc_id):
+def get_npc_raw_data(npc_id=None, name=None, zone=None):
+    excl_list = utils.get_exclusion_list('npcs')
+    if npc_id in excl_list:
+        return None
     with Session(bind=engine) as session:
-        query = session.query(NPCTypes).filter(NPCTypes.id == npc_id)
-        result = query.one()
-
-    ret_dict = result.__dict__
-    ret_dict.pop('_sa_instance_state')
-    return ret_dict
+        if npc_id:
+            query = session.query(NPCTypes).filter(NPCTypes.id == npc_id)
+            result = query.one()
+            ret_dict = result.__dict__
+            ret_dict.pop('_sa_instance_state')
+            return ret_dict
+        else:
+            ret_list = []
+            if zone:
+                query = session.query(Zone.zoneidnumber).filter(Zone.short_name == zone)
+                result = query.one()
+                zone_id = result[0]
+                query = session.query(NPCTypes).filter(NPCTypes.id.like(f'{zone_id}___')).\
+                    filter(NPCTypes.name.like('%%%s%%' % name))
+            else:
+                query = session.query(NPCTypes).filter(NPCTypes.name.like('%%%s%%' % name))
+            result = query.limit(50).all()
+            for entry in result:
+                entry = entry.__dict__
+                entry.pop('_sa_instance_state')
+                if entry['id'] in excl_list:
+                    continue
+                ret_list.append(entry)
+            return ret_list

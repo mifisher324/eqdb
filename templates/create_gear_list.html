@@ -1,0 +1,35 @@
+<!-- NOTE: THIS FEATURE IS CURRENTLY DARK AS IT IS BEING CONSIDERED ON WHETHER IT IS APPROPRIATE FOR EQDB OR NOT -->
+{% extends "layout.html" %}
+{% block body %}
+<script>
+window.onload = doStuff;
+
+function doStuff() {
+    var form = document.getElementById("demoForm");
+    form.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent default form submission
+            form.submit(); // Manually submit the form
+        }
+    });
+}
+</script>
+<script>
+$(document).ready(function() {
+
+    $('textarea').keypress(function(event) {
+
+        if (event.keyCode == 13) {
+            event.preventDefault();
+        }
+    });
+});
+</script>
+<center><h3>Create Gear List</h3></center>
+<form action="{{ url_for('create_gear_list') }}" method="post" class="add-entry" id="demoForm">
+    NAME: <textarea rows="1" class="nameentry" name="set_name"></textarea><br>
+    Make Public?: <input type="checkbox" name="is_public" value="True"><br><br>
+    <input type="submit" value="Submit">
+</form>
+
+{% endblock %}

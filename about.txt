@@ -1,7 +1,7 @@
 ==OVERVIEW==
-EQDB (EverQuest Database) is a gear search site that has been designed to support and assit with searching for gear available on The Heroes Journey EQ EMU server, with some potential applications to Live EQ.
+EQDB (EverQuest Database) is a gear search site that has been designed to support and assit with searching for gear available on an EQEMU server, with some potential applications to Live EQ.
 
-EQDB has close-to-live data that is updated on a frequent cadence to match information from what you'd expect on THJ itself.  While 99% of the site should be accurate, there are outliers and occasionally out-of-era items slip through.  If you find one of these items, please report it to Convection on the THJ discord.
+EQDB has close-to-live data that is updated on a frequent cadence to match information from what you'd expect on EQEMU itself.  While 99% of the site should be accurate, there are outliers and occasionally out-of-era items slip through.  If you find one of these items, please report it to Convection on discord.
 
 Additional features, such as generating a one-stop-BIS-list, are planned for the future in addition to site enhancements and changes.  Keep your eyes open on the changelog for more details!
 
@@ -56,5 +56,18 @@ Specifying Show Only Weight Details will show only the stats on the item that yo
 ==TRADESKILLS==
 Tradeskills are still being actively worked on to pull in the correct tradeskill items for each expansion.  Unfortunately, this is proving to be difficult to do, so for the moment, tradeskill items are confined to Planes of Power well-known high strength tradeskill items such as Ornate and Elemental armors, and the bows from the elemental planes.
 
+==API LISTING==
+https://eqdb.net/api/v1/items?id=            Search items by item id
+https://eqdb.net/api/v1/items?name=          Search items by partial name (50 results maximum)
+https://eqdb.net/api/v1/spells?id=          Search spells by spell id
+https://eqdb.net/api/v1/spells?name=        Search spells by partial name (50 results maximum)
+https://eqdb.net/api/v1/npcs?id=            Search NPCs by NPC id
+https://eqdb.net/api/v1/npcs?name=          Search NPCs by partial name (50 results maximum)
+https://eqdb.net/api/v1/npcs?name=&zone=    Search NPCs by partial name and zone shortname (50 results maximum)
+https://eqdb.net/api/v1/trades?id=          Search Tradeskills by tradeskill id
+https://eqdb.net/api/v1/trades?name=        Search Tradeskills by partial tradeskill name (50 results maximum)
+https://eqdb.net/api/v1/loot?id=            Search Loot Drops by loottable id
+https://eqdb.net/api/v1/loot?npc=           Search Loot Drops by npc id
+
 ==PROBLEMS, QUESTIONS, SUGGESTIONS?==
-Reach out to Convection on the THJ Discord or send a tell to Taliea in game.
+Reach out to Convection on Discord.

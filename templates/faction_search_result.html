@@ -2,6 +2,6 @@
 {% block body %}
 <h3>Search Results:</h3>
 {% for entry in data %}
-<li><a href="{{url_for('faction_detail', faction_id=entry.faction_id)}}">{{entry.faction_name}}</a></li>
+<li><a href="{{url_for('factions.faction_detail', faction_id=entry.faction_id)}}">{{entry.faction_name}}</a></li>
 {% endfor %}
 {% endblock %}
