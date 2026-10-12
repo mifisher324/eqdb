@@ -410,7 +410,6 @@ def get_era_items(kwargs):
     ts_item_ids = []
     quest_items = []
     for era in kwargs['eras']:
-        print(f'Check era {era}')
         zone_id_list = utils.get_era_zones(era)
         for zone_id in zone_id_list:
             zone_or_filters.append(NPCTypes.id.like(f'{zone_id}___'))
