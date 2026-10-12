@@ -222,7 +222,8 @@ def item_search():
         filters.update({'i_type': i_type})
 
     # Handle Eras
-    base_era_list = ['Classic', 'Kunark', 'Velious', 'Luclin', 'Planes', 'LDoN']
+    all_eras = utils.get_all_eras()
+    base_era_list = all_eras.keys()
     remove_era_list = request.form.getlist('eras')
     era_list = []
     for era in base_era_list:
@@ -408,8 +409,9 @@ def item_search():
 def weapon_search():
     if request.method == 'GET':
         skills = utils.get_all_skills()
+        eras = utils.get_all_eras()
         return render_template('weapon_search.html',
-                               skills=skills)
+                               skills=skills, eras=eras)
     else:
         return redirect(url_for('item_search'), code=307)
 
@@ -418,8 +420,9 @@ def weapon_search():
 def armor_search():
     if request.method == 'GET':
         skills = utils.get_all_skills()
+        eras = utils.get_all_eras()
         return render_template('item_search.html',
-                               skills=skills)
+                               skills=skills, eras=eras)
     else:
         return redirect(url_for('item_search'), code=307)
 

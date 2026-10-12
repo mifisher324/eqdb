@@ -1,14 +1,11 @@
 ==3.0==
-* Removed the "Login" section (it does nothing now).
-* Removed the "User Area", unneeded with changes to use local cache.
-* Removed "Identify Items" minigame, it is not needed and was barely used.
-
 * Weapon and Armor search:
     ** Adding / removing a restriction filter no longer moves the previous options to the right
     ** Stat Restrictions and Stat Weights now use your browser's cache and will survive going off of the associated
     search page (and will also automatically restore themselves when you come back later).
     ** Search results no longer open in a new tab
     ** Fixed searching for combat effects mod 2
+    ** Changed the expansions to use to be controlled entirely by the configuration setting for era
 
 * Weapon Search
     ** The Item Type now updates to only the allowed options for the slot selected
@@ -16,10 +13,11 @@
     base damage of the proc.
 
 * Added initial support for LDoN
-    ** Dropped items will now be shown when searching for Weapons or Armor
-    ** Tradeskilled, vendor, and quested are not yet available
-    ** Monster mission items will probably fall under quested in the future
+    ** Dropped items will now be shown when searching for Weapons or Armor.
+    ** Vendor items do not show correctly yet.
+    ** Monster mission items have been added speculatively but may not show due to data differences.
 
 * Miscellaneous
-    ** Inverted the Class and Slot display where used (tooltips, item detail, etc) to more closely match game tooltips
+    ** Inverted the Class, Slot and Augment Type display where used (tooltips, item detail, etc) to more closely
+       match game tooltips
     ** Scrubbed certain things off the site that are no longer relevant

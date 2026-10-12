@@ -4,6 +4,8 @@ import os
 from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 
+from logic import expansion
+
 here = os.path.dirname(__file__)
 
 
@@ -2026,47 +2028,47 @@ def get_aug_restrict(num):
 
 
 def get_aug_types(num):
-    out_str = ""
+    out_str = ''
     while num > 0:
         if num >= 4096:
             return 'AUGMENT HIGHER THAN 13, FIX ME'
         if num >= 2048:
             num -= 2048
-            out_str += '12 (FIX ME) '
+            out_str = '12 (FIX ME), ' + out_str
         if num >= 1024:
             num -= 1024
-            out_str += '11 (FIX ME) '
+            out_str = '11 (FIX ME), ' + out_str
         if num >= 512:
             num -= 512
-            out_str += '10 (FIX ME) '
+            out_str = '10 (FIX ME), ' + out_str
         if num >= 256:
             num -= 256
-            out_str += '9 (FIX ME) '
+            out_str = '9 (FIX ME), ' + out_str
         if num >= 128:
             num -= 128
-            out_str += '8 (FIX ME) '
+            out_str = '8 (General: Raid), ' + out_str
         if num >= 64:
             num -= 64
-            out_str += '7 (FIX ME) '
+            out_str = '7 (FIX ME), ' + out_str
         if num >= 32:
             num -= 32
-            out_str += '6 (FIX ME) '
+            out_str = '6 (FIX ME), ' + out_str
         if num >= 16:
             num -= 16
-            out_str += '5 (FIX ME) '
+            out_str = '5 (FIX ME), ' + out_str
         if num >= 8:
             num -= 8
-            out_str += '4 (Weapon) '
+            out_str = '4 (Weapon), ' + out_str
         if num >= 4:
             num -= 4
-            out_str += '3 (Spells) '
+            out_str = '3 (Spells), ' + out_str
         if num >= 2:
             num -= 2
-            out_str += '2 (Elite) '
+            out_str = '2 (Elite), ' + out_str
         if num >= 1:
             num -= 1
-            out_str += '1 (Stats) '
-    return out_str.strip()
+            out_str = '1 (Stats), ' + out_str
+    return out_str[:-2].strip()
 
 
 def get_aug_slot_type(num):
@@ -3167,6 +3169,66 @@ def check_sympathetic(name):
         return f'{split_name[0]}{split_name[1]}'
     else:
         return name
+
+
+def get_all_eras():
+    all_era = {'Classic': 'Classic',
+               'Kunark': 'Ruins of Kunark',
+               'Velious': 'Scars of Velious',
+               'Luclin': 'Shadows of Luclin',
+               'Planes': 'Planes of Power',
+               'LDoN': 'Lost Dungeons of Norrath',
+               'GoD': 'Gates of Discord',
+               'OoW': 'Omens of War',
+               'DoN': 'Dragons of Norrath',
+               'DoDH': 'Depths of Darkhollow',
+               'PoR': 'Prophecy of Ro',
+               'TSS': "The Serpent's Spine",
+               'TBS': 'The Buried Sea',
+               'SoF': 'Secrets of Faydwer',
+               'SoD': 'Seeds of Destruction',
+               'UF': 'Underfoot',
+               'HoT': 'House of Thule',
+               'VoA': 'Veil of Alaris',
+               'RoF': 'Rain of Fear'}
+    if expansion < 19:
+        del all_era['RoF']
+    if expansion < 18:
+        del all_era['VoA']
+    if expansion < 17:
+        del all_era['HoT']
+    if expansion < 16:
+        del all_era['UF']
+    if expansion < 15:
+        del all_era['SoD']
+    if expansion < 14:
+        del all_era['SoF']
+    if expansion < 13:
+        del all_era['TBS']
+    if expansion < 12:
+        del all_era['TSS']
+    if expansion < 11:
+        del all_era['PoR']
+    if expansion < 10:
+        del all_era['DoDH']
+    if expansion < 9:
+        del all_era['DoN']
+    if expansion < 8:
+        del all_era['OoW']
+    if expansion < 7:
+        del all_era['GoD']
+    if expansion < 6:
+        del all_era['LDoN']
+    if expansion < 4:
+        del all_era['Planes']
+    if expansion < 3:
+        del all_era['Luclin']
+    if expansion < 2:
+        del all_era['Velious']
+    if expansion < 1:
+        del all_era['Kunark']
+
+    return all_era
 
 
 def get_era_name(era_id):

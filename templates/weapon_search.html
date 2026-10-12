@@ -487,13 +487,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     </tr>
                     <tr>
                         <td colspan="4">
-                            <select multiple name="eras" size="6">
-                                <option value="Classic">Classic</option>
-                                <option value="Kunark">Kunark</option>
-                                <option value="Velious">Velious</option>
-                                <option value="Luclin">Luclin</option>
-                                <option value="Planes">Planes of Power</option>
-                                <option value="LDoN">Lost Dungeons of Norrath</option>
+                            <select multiple name="eras" size="{{eras|length}}">
+                                {% for entry in eras %}
+                                <option value="{{entry}}">{{eras[entry]}}</option>
+                                {% endfor %}
                             </select>
                     </tr>
                     <tr>
